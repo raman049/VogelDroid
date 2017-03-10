@@ -3,6 +3,8 @@ package com.vogelplay.vogel;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -11,18 +13,22 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
+    PopupWindow popUpWindow;
+    ImageButton scoreboard;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         //setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         // Creating a new FrameLayout
-        FrameLayout frameLayout = new FrameLayout(this);
+        final FrameLayout frameLayout = new FrameLayout(this);
         frameLayout.setBackgroundColor(Color.RED);
         //Remove title bar
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -39,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         // Creating a new TextView
         TextView tv = new TextView(this);
         tv.setText("VOGEL");
+        tv.setTypeface(Typeface.create("Comic Sans MS", Typeface.NORMAL));
         tv.setGravity(Gravity.CENTER);
         tv.setTextColor(Color.BLUE);
         tv.setTextSize(100);
@@ -64,28 +71,54 @@ public class MainActivity extends AppCompatActivity {
         lpHS.setMargins(width/2 - 350,height - 150 ,0,0);
         highScore.setText("HIGH SCORE");
 
-        highScore.setTypeface(Typeface.create("wichita", Typeface.NORMAL));;
+        highScore.setTypeface(Typeface.create("Comic Sans MS", Typeface.NORMAL));
         highScore.setGravity(Gravity.CENTER);
         highScore.setTextColor(Color.YELLOW);
         highScore.setTextSize(25);
         highScore.setLayoutParams(lpHS);
         frameLayout.addView(highScore);
 
-        ImageButton instruction = new ImageButton(this);
+         final ImageButton instruction = new ImageButton(this);
+         popUpWindow = new PopupWindow(this);
         FrameLayout.LayoutParams lpInst = new FrameLayout.LayoutParams(150, 150);
         lpInst.setMargins(10,height-170,0,0);
         instruction.setLayoutParams(lpInst);
         instruction.setBackgroundResource(R.drawable.instruction_que);
+        frameLayout.addView(instruction);
         instruction.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                Toast toast = Toast.makeText(MainActivity.this, "You clicked button " + v.getId(), Toast.LENGTH_LONG);
-                toast.show();
+                instruction.invalidate();
+                scoreboard.invalidate();
+                popUpWindow.showAtLocation(frameLayout,Gravity.CENTER,0,0);
             }
         });
-        frameLayout.addView(instruction);
+        ImageView instView = new ImageView(MainActivity.this);
+        FrameLayout.LayoutParams lpinstView = new FrameLayout.LayoutParams(width-100, height-100);
+        lpinstView.setMargins(0,0,0,0);
+        instView.setLayoutParams(lpinstView);
+        instView.setImageResource(R.drawable.instruction2);
+        FrameLayout popupFrame = new FrameLayout(this);
+        popupFrame.addView(instView);
 
-        ImageButton scoreboard = new ImageButton(this);
+        ImageButton backButton = new ImageButton(this);
+        FrameLayout.LayoutParams lpbackButton = new FrameLayout.LayoutParams(150, 160);
+        lpbackButton.setMargins(10,10,0,0);
+        backButton.setLayoutParams(lpbackButton);
+        backButton.setBackgroundResource(R.drawable.back);
+        backButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                instruction.isActivated();
+                scoreboard.isActivated();
+               popUpWindow.dismiss();
+            }
+        });
+        popupFrame.addView(backButton);
+        popUpWindow.setContentView(popupFrame);
+
+
+         scoreboard = new ImageButton(this);
         FrameLayout.LayoutParams lpscoreb = new FrameLayout.LayoutParams(150, 150);
         lpscoreb.setMargins(170,height-170,0,0);
         scoreboard.setLayoutParams(lpscoreb);
@@ -98,6 +131,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         frameLayout.addView(scoreboard);
+
+
+
 
     }
 
