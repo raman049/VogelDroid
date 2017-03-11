@@ -1,5 +1,6 @@
 package com.vogelplay.vogel;
 
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -7,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -22,13 +24,14 @@ public class MainActivity extends AppCompatActivity {
 
     PopupWindow popUpWindow;
     ImageButton scoreboard;
+     FrameLayout frameLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         //setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         // Creating a new FrameLayout
-        final FrameLayout frameLayout = new FrameLayout(this);
+        frameLayout = new FrameLayout(this);
         frameLayout.setBackgroundColor(Color.RED);
         //Remove title bar
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -60,8 +63,11 @@ public class MainActivity extends AppCompatActivity {
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast toast = Toast.makeText(MainActivity.this, "You clicked button " + v.getId(), Toast.LENGTH_LONG);
-                toast.show();
+                //Connect();
+                Intent i = new Intent(MainActivity.this,Activity2.class);
+                startActivity(i);
+                //Toast toast = Toast.makeText(MainActivity.this, "You clicked button " + v.getId(), Toast.LENGTH_LONG);
+               // toast.show();
             }
         });
         frameLayout.addView(playButton);
@@ -91,6 +97,8 @@ public class MainActivity extends AppCompatActivity {
                 instruction.invalidate();
                 scoreboard.invalidate();
                 popUpWindow.showAtLocation(frameLayout,Gravity.CENTER,0,0);
+               final String ss="skdjf";
+                Log.d(ss,"onClick");
             }
         });
         ImageView instView = new ImageView(MainActivity.this);
@@ -132,9 +140,12 @@ public class MainActivity extends AppCompatActivity {
         });
         frameLayout.addView(scoreboard);
 
-
-
-
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
 
 }
