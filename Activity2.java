@@ -2,6 +2,7 @@ package com.vogelplay.vogel;
 
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -49,10 +50,15 @@ public class Activity2 extends AppCompatActivity{
         frameLayout2.addView(tap);
 
 
-//        FrameLayout.LayoutParams flpSun = new FrameLayout.LayoutParams(
-//                200,200);
-//        flpTtoS.setMargins(width/2 ,height/2+100,0,0);
-
+        FrameLayout.LayoutParams flpSun = new FrameLayout.LayoutParams(
+                200,200);
+        flpSun.setMargins(width - 400 , 100,0,0);
+        ImageView image = new ImageView(this);
+        image.setImageResource(R.drawable.sun);
+        image.setLayoutParams(flpSun);
+        frameLayout2.addView(image);
+//        Bitmap bMap = BitmapFactory.decodeFile("/sdcard/test2.png");
+//        image.setImageBitmap(bMap);
 
 
     }
