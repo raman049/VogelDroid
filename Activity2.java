@@ -27,7 +27,8 @@ public class Activity2 extends AppCompatActivity {
     FrameLayout frameLayout2;
     TextView tap, high_score;
     ImageView bird;
-    int bird_x, bird_y, height, width;
+    int bird_x, bird_y, height, width, y_motion, score;
+    boolean gameOver, started;
     FrameLayout.LayoutParams flp_bird;
     protected void onCreate(Bundle savedInstanceState) {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
@@ -62,10 +63,8 @@ public class Activity2 extends AppCompatActivity {
         high_score.setText("High Score: 0000000000");
         high_score.setTypeface(Typeface.create("Comic Sans MS", Typeface.NORMAL));
         high_score.setGravity(Gravity.CENTER);
-        high_score.setTextColor(Color.YELLOW);
         high_score.setTextSize(18);
         high_score.setTextColor(Color.RED);
-        high_score.setGravity(Gravity.CENTER);
         high_score.setBackgroundColor(Color.GRAY);
         high_score.setLayoutParams(frame_hs);
         frameLayout2.addView(high_score);
@@ -102,16 +101,32 @@ public class Activity2 extends AppCompatActivity {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        frameLayout2.removeView(tap);
 
-//        if (event.getAction() == MotionEvent.ACTION_BUTTON_PRESS){
-//            bird.setX(bird.getX()+20);
-//        }
+        if(started == true) {
+            frameLayout2.removeView(tap);
+            high_score.setTextSize(12);
+            high_score.setTextColor(Color.BLUE);
+            high_score.setX(0-250);
+            high_score.setY(20);
+            //Your Score
+            FrameLayout.LayoutParams frame_score = new FrameLayout.LayoutParams(
+                    1000,100);
+            framframe_scoree_hs.setMargins(width/2 - 500,height/6,0,0);
+            your_score = new TextView(this);
+            your_score.setText("High Score: 0000000000");
+            your_score.setTypeface(Typeface.create("Comic Sans MS", Typeface.NORMAL));
+            your_score.setGravity(Gravity.CENTER);
+            your_score.setTextSize(18);
+            your_score.setTextColor(Color.RED);
+            your_score.setBackgroundColor(Color.GRAY);
+            your_score.setLayoutParams(frame_score);
+            frameLayout2.addView(your_score);
+        }
 
+        bird.setY(bird.getY() + y_motion);
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
-                bird.setX(bird.getX());
-                bird.setY(bird.getY() - 5);
+                fly();
 
                 break;
             case MotionEvent.ACTION_BUTTON_RELEASE:
@@ -165,6 +180,16 @@ public class Activity2 extends AppCompatActivity {
         }
 
     }
+
+    public void fly(){
+        if(started != true){
+            started = true;
+        }
+
+            y_motion -= 5;
+        }
+
+
 
 
 
