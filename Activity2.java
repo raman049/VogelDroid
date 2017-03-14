@@ -25,7 +25,7 @@ public class Activity2 extends AppCompatActivity {
 
 
     FrameLayout frameLayout2;
-    TextView tap;
+    TextView tap, high_score;
     ImageView bird;
     int bird_x, bird_y, height, width;
     FrameLayout.LayoutParams flp_bird;
@@ -42,28 +42,44 @@ public class Activity2 extends AppCompatActivity {
          width = this.getResources().getDisplayMetrics().widthPixels;
          height = this.getResources().getDisplayMetrics().heightPixels;
         FrameLayout.LayoutParams flpTtoS = new FrameLayout.LayoutParams(
-                500,100);
-        flpTtoS.setMargins(width/2 - 250,height/2 -50,0,0);
+                1000,200);
+        flpTtoS.setMargins(width/2 - 550,height/2 -200,0,0);
         // Creating a new TextView
         tap = new TextView(this);
         tap.setText("Tap To Start");
         tap.setTypeface(Typeface.create("Comic Sans MS", Typeface.NORMAL));
         tap.setGravity(Gravity.CENTER);
         tap.setTextColor(Color.YELLOW);
-        tap.setTextSize(25);
+        tap.setTextSize(50);
+        tap.setBackgroundColor(Color.GRAY);
         tap.setLayoutParams(flpTtoS);
         frameLayout2.addView(tap);
+        //High Score
+        FrameLayout.LayoutParams frame_hs = new FrameLayout.LayoutParams(
+                1000,100);
+        frame_hs.setMargins(width/2 - 500,height/6,0,0);
+        high_score = new TextView(this);
+        high_score.setText("High Score: 0000000000");
+        high_score.setTypeface(Typeface.create("Comic Sans MS", Typeface.NORMAL));
+        high_score.setGravity(Gravity.CENTER);
+        high_score.setTextColor(Color.YELLOW);
+        high_score.setTextSize(18);
+        high_score.setTextColor(Color.RED);
+        high_score.setGravity(Gravity.CENTER);
+        high_score.setBackgroundColor(Color.GRAY);
+        high_score.setLayoutParams(frame_hs);
+        frameLayout2.addView(high_score);
     //wave
         addWave();
         //Sun
         FrameLayout.LayoutParams flpSun = new FrameLayout.LayoutParams(
-                200,200);
+                100,100);
         flpSun.setMargins(width - 400 , 100,0,0);
         ImageView image = new ImageView(this);
         image.setImageResource(R.drawable.sun);
         image.setLayoutParams(flpSun);
         frameLayout2.addView(image);
-        RotateAnimation rotate_sun = new RotateAnimation(0.0f, -358f, 100,100);
+        RotateAnimation rotate_sun = new RotateAnimation(0.0f, -360f, 50,50);
         rotate_sun.setDuration(10000);
         rotate_sun.setRepeatCount(-1);
         rotate_sun.setRepeatMode(1);
@@ -73,12 +89,13 @@ public class Activity2 extends AppCompatActivity {
 
         //bird
         flp_bird = new FrameLayout.LayoutParams(
-                200,200);
+                150,150);
         bird_x = width/3; bird_y= height/2;
         flp_bird.setMargins(bird_x , bird_y,width/3 + 200,height/2 + 200);
         bird = new ImageView(this);
         bird.setImageResource(R.drawable.bird1);
         bird.setLayoutParams(flp_bird);
+
         frameLayout2.addView(bird);
 
     }
@@ -86,28 +103,24 @@ public class Activity2 extends AppCompatActivity {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         frameLayout2.removeView(tap);
-        //     frameLayout2.setBackgroundColor(Color.DKGRAY);
-//        Intent i = new Intent(Activity2.this,Activity3.class);
-//        startActivity(i);
 
+//        if (event.getAction() == MotionEvent.ACTION_BUTTON_PRESS){
+//            bird.setX(bird.getX()+20);
+//        }
 
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_BUTTON_PRESS: {
-                Log.i("ksd","kksfawefekkkk");
+        switch (event.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                bird.setX(bird.getX());
+                bird.setY(bird.getY() - 5);
+
                 break;
-            }
-            case MotionEvent.ACTION_BUTTON_RELEASE: {
-                flp_bird.setMargins(bird_x +10, bird_y -20,0,0);
-                Log.i("k","kkk");
-                break;
-            }case MotionEvent.ACTION_CANCEL:{
-                flp_bird.setMargins(bird_x , bird_y + 20,0,0);
-                Log.i("ksdf","kxdfsdfkk");
-            }
+            case MotionEvent.ACTION_BUTTON_RELEASE:
+                bird.setX(bird.getX());
+                bird.setY(bird.getY() +105);
 
+                break;
         }
 
-        bird.setLayoutParams(flp_bird);
         return super.onTouchEvent(event);
 
     }
@@ -118,7 +131,7 @@ public class Activity2 extends AppCompatActivity {
             waveStatic.setImageResource(R.drawable.wave2);
             FrameLayout.LayoutParams flpwaveStatic = new FrameLayout.LayoutParams(
                     400, 200);
-            flpwaveStatic.setMargins(0 + (390*i) -5, height - 170, 0, 0);
+            flpwaveStatic.setMargins(0 + (400*i) -5, height - 170, 0, 0);
             waveStatic.setLayoutParams(flpwaveStatic);
             frameLayout2.addView(waveStatic);
 
@@ -128,87 +141,28 @@ public class Activity2 extends AppCompatActivity {
                     400, 200);
             flpWave.setMargins((390*i)-400, height - 170, 0, 0);
             wave.setLayoutParams(flpWave);
-            TranslateAnimation move_wave = new TranslateAnimation(0, 400, 0, 0);
-            move_wave.setDuration(500);
+            TranslateAnimation move_wave = new TranslateAnimation(0, 600, 0, 0);
+            move_wave.setDuration(1000);
             move_wave.setRepeatCount(-1);
             move_wave.setRepeatMode(1);
             move_wave.setFillBefore(true);
             wave.startAnimation(move_wave);
             frameLayout2.addView(wave);
+
             ImageView wave2 = new ImageView(this);
             wave2.setImageResource(R.drawable.wave2);
             FrameLayout.LayoutParams flpWave2 = new FrameLayout.LayoutParams(
                     400, 200);
-            flpWave.setMargins((390*i)-600, height - 170, 0, 0);
+            flpWave2.setMargins((400*i)-605, height - 170, 0, 0);
             wave2.setLayoutParams(flpWave2);
-            TranslateAnimation move_wave2 = new TranslateAnimation(0, 400, 0, 0);
-            move_wave2.setDuration(700);
+            TranslateAnimation move_wave2 = new TranslateAnimation(0, 600, 0, 0);
+            move_wave2.setDuration(800);
             move_wave2.setRepeatCount(-1);
             move_wave2.setRepeatMode(1);
+            move_wave2.getFillAfter();
             wave2.startAnimation(move_wave2);
             frameLayout2.addView(wave2);
         }
-//        ImageView wave = new ImageView(this);
-//        wave.setImageResource(R.drawable.wave2);
-//        FrameLayout.LayoutParams flpWave = new FrameLayout.LayoutParams(
-//                400, 200);
-//        flpWave.setMargins(0 - 390, height - 170, 0, 0);
-//        wave.setLayoutParams(flpWave);
-//        TranslateAnimation move_wave = new TranslateAnimation(0, 380, 0, 0);
-//        move_wave.setDuration(1800);
-//        move_wave.setRepeatCount(-1);
-//        move_wave.setRepeatMode(1);
-//        wave.startAnimation(move_wave);
-//        frameLayout2.addView(wave);
-//        ImageView wave2 = new ImageView(this);
-//        wave2.setImageResource(R.drawable.wave2);
-//        FrameLayout.LayoutParams flpWave2 = new FrameLayout.LayoutParams(
-//                400, 200);
-//        flpWave2.setMargins(0, height - 170, 0, 0);
-//        wave2.setLayoutParams(flpWave2);
-//        TranslateAnimation move_wave2 = new TranslateAnimation(0, 380, 0, 0);
-//        move_wave2.setDuration(1800);
-//        move_wave2.setRepeatCount(-1);
-//        move_wave2.setRepeatMode(1);
-//        wave2.startAnimation(move_wave2);
-//        frameLayout2.addView(wave2);
-//        ImageView wave3 = new ImageView(this);
-//        wave3.setImageResource(R.drawable.wave2);
-//        FrameLayout.LayoutParams flpWave3 = new FrameLayout.LayoutParams(
-//                400, 200);
-//        flpWave3.setMargins(390, height - 170, 0, 0);
-//        wave3.setLayoutParams(flpWave3);
-//        TranslateAnimation move_wave3 = new TranslateAnimation(0, 380, 0, 0);
-//        move_wave3.setDuration(1800);
-//        move_wave3.setRepeatCount(-1);
-//        move_wave3.setRepeatMode(1);
-//        wave3.startAnimation(move_wave3);
-//        frameLayout2.addView(wave3);
-//        ImageView wave4 = new ImageView(this);
-//        wave4.setImageResource(R.drawable.wave2);
-//        FrameLayout.LayoutParams flpWave4 = new FrameLayout.LayoutParams(
-//                400, 200);
-//        flpWave4.setMargins(780, height - 170, 0, 0);
-//        wave4.setLayoutParams(flpWave4);
-//        TranslateAnimation move_wave4 = new TranslateAnimation(0, 380, 0, 0);
-//        move_wave4.setDuration(1800);
-//        move_wave4.setRepeatCount(-1);
-//        move_wave4.setRepeatMode(1);
-//        wave4.startAnimation(move_wave4);
-//        frameLayout2.addView(wave4);
-//        ImageView wave5 = new ImageView(this);
-//        wave5.setImageResource(R.drawable.wave2);
-//        FrameLayout.LayoutParams flpWave5 = new FrameLayout.LayoutParams(
-//                400, 200);
-//        flpWave5.setMargins(1170, height - 170, 0, 0);
-//        wave5.setLayoutParams(flpWave5);
-//        TranslateAnimation move_wave5 = new TranslateAnimation(0, 380, 0, 0);
-//        move_wave5.setDuration(1800);
-//        move_wave5.setRepeatCount(-1);
-//        move_wave5.setRepeatMode(1);
-//        wave5.startAnimation(move_wave5);
-//        frameLayout2.addView(wave5);
-
 
     }
 
