@@ -114,7 +114,9 @@ public class Activity2 extends AppCompatActivity {
                 if (addStuff != true) {
                     addJetB();
                     addShip();
-                    addCloud();
+                    addCloud1();
+                    addCloud2();
+                    addCloud3();
                     addJetY();
                     addStuff = true;
                 }
@@ -208,7 +210,7 @@ public class Activity2 extends AppCompatActivity {
 //            }
 //        }
 //    }
-    ImageView jetY,cloud,jetB,ship;
+    ImageView jetY,cloud1,cloud2,cloud3,jetB,ship;
     public void addWave() {
         //Wave
         for (int i =0 ; i<7; i++){
@@ -254,13 +256,15 @@ public class Activity2 extends AppCompatActivity {
          jetY = new ImageView(this);
         jetY.setImageResource(R.drawable.plane2);
         Random random1 = new Random();
-        int ramdom11 = random1.nextInt(1000-10) + 10;
+        Random random12 = new Random();
+        int random11 = 100 + random1.nextInt(height-500);
+        int random112 = width + random12.nextInt(width/2);
         FrameLayout.LayoutParams fl_jet = new FrameLayout.LayoutParams(
                 200, 200);
-        fl_jet.setMargins(width + 100, ramdom11, 0, 0);
+        fl_jet.setMargins(random112, random11, 0, 0);
         jetY.setLayoutParams(fl_jet);
-        TranslateAnimation move_jetY = new TranslateAnimation(0, 0-width-400, 0, 0);
-        move_jetY.setDuration(5000);
+        TranslateAnimation move_jetY = new TranslateAnimation(0, 0-(width*2)-300, 0, 0);
+        move_jetY.setDuration(4000);
         move_jetY.setRepeatCount(0);
         move_jetY.setRepeatMode(1);
         jetY.startAnimation(move_jetY);
@@ -269,40 +273,80 @@ public class Activity2 extends AppCompatActivity {
     public void addJetB(){
         jetB = new ImageView(this);
         jetB.setImageResource(R.drawable.plane1);
-        Random random1 = new Random();
-        int ramdom11 = random1.nextInt(1000-10) + 10;
+        Random random1y = new Random();
+        Random random1x = new Random();
+        int random11y = 120 + random1y.nextInt(height -500);
+        int random11x = width + random1x.nextInt(600);
         FrameLayout.LayoutParams fl_jet = new FrameLayout.LayoutParams(
                 200, 200);
-        fl_jet.setMargins(width + 100, ramdom11, 0, 0);
+        fl_jet.setMargins(random11x, random11y, 0, 0);
         jetB.setLayoutParams(fl_jet);
-        TranslateAnimation move_jetY = new TranslateAnimation(0, 0-width-400, 0, 0);
+        TranslateAnimation move_jetY = new TranslateAnimation(0, 0-width*2, 0, 0);
         move_jetY.setDuration(5000);
         move_jetY.setRepeatCount(0);
         move_jetY.setRepeatMode(1);
         jetB.startAnimation(move_jetY);
         frameLayout2.addView(jetB);
     }
-    public void addCloud(){
-         cloud = new ImageView(this);
-        cloud.setImageResource(R.drawable.cloud1);
-        Random random1 = new Random();
-        int ramdom11 = random1.nextInt(100-10) + 10;
+    public void addCloud1(){
+         cloud1 = new ImageView(this);
+        cloud1.setImageResource(R.drawable.cloud1);
+        Random random1y = new Random();
+        Random random1x = new Random();
+        int random11x = width + random1y.nextInt(width);
+        int random11y = random1y.nextInt(100-10) + 10;
         FrameLayout.LayoutParams fl_cloud = new FrameLayout.LayoutParams(
                 200, 200);
-        fl_cloud.setMargins(width + 100, ramdom11, 0, 0);
-        cloud.setLayoutParams(fl_cloud);
-        TranslateAnimation move_cloud = new TranslateAnimation(0, 0-width-400, 0, 0);
+        fl_cloud.setMargins(random11x, random11y, 0, 0);
+        cloud1.setLayoutParams(fl_cloud);
+        TranslateAnimation move_cloud = new TranslateAnimation(0, 0-width*2 + 300, 0, 0);
         move_cloud.setDuration(5000);
         move_cloud.setRepeatCount(0);
         move_cloud.setRepeatMode(1);
-        cloud.startAnimation(move_cloud);
-        frameLayout2.addView(cloud);
+        cloud1.startAnimation(move_cloud);
+        frameLayout2.addView(cloud1);
+    }
+    public void addCloud2(){
+        cloud2 = new ImageView(this);
+        cloud2.setImageResource(R.drawable.cloud2);
+        Random random1y = new Random();
+        Random random1x = new Random();
+        int random11x = width + random1x.nextInt(width);
+        int random11y = random1y.nextInt(100-10) + 10;
+        FrameLayout.LayoutParams fl_cloud2 = new FrameLayout.LayoutParams(
+                200, 200);
+        fl_cloud2.setMargins(random11x, random11y, 0, 0);
+        cloud2.setLayoutParams(fl_cloud2);
+        TranslateAnimation move_cloud2 = new TranslateAnimation(0, 0-width*2 + 300, 0, 0);
+        move_cloud2.setDuration(5000);
+        move_cloud2.setRepeatCount(0);
+        move_cloud2.setRepeatMode(1);
+        cloud2.startAnimation(move_cloud2);
+        frameLayout2.addView(cloud2);
+    }
+    public void addCloud3(){
+        cloud3 = new ImageView(this);
+        cloud3.setImageResource(R.drawable.cloud3);
+        Random random1y = new Random();
+        Random random1x = new Random();
+        int random11x = width + random1x.nextInt(width);
+        int random11y = random1y.nextInt(100-10) + 10;
+        FrameLayout.LayoutParams fl_cloud3 = new FrameLayout.LayoutParams(
+                200, 200);
+        fl_cloud3.setMargins(random11x, random11y, 0, 0);
+        cloud3.setLayoutParams(fl_cloud3);
+        TranslateAnimation move_cloud3 = new TranslateAnimation(0, 0-width*2 + 300, 0, 0);
+        move_cloud3.setDuration(5000);
+        move_cloud3.setRepeatCount(0);
+        move_cloud3.setRepeatMode(1);
+        cloud3.startAnimation(move_cloud3);
+        frameLayout2.addView(cloud3);
     }
     public void addShip(){
          ship = new ImageView(this);
         ship.setImageResource(R.drawable.ship2);
         Random random1 = new Random();
-        int ramdom11 = height-200 + random1.nextInt(10);
+        int ramdom11 = height-290 + random1.nextInt(10);
         FrameLayout.LayoutParams fl_ship = new FrameLayout.LayoutParams(
                 200, 200);
         fl_ship.setMargins(0 - 200, ramdom11, 0, 0);
@@ -320,12 +364,6 @@ public class Activity2 extends AppCompatActivity {
         }
 
             y_motion = -5;
-        }
-
-        public void antiFly(){
-            if(started == true){
-                y_motion += 5;
-            }
         }
 
 
