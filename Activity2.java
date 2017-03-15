@@ -5,7 +5,12 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ActionMode;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -17,6 +22,10 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
+
 /**
  * Created by maharjan on 3/9/17.
  */
@@ -25,11 +34,14 @@ public class Activity2 extends AppCompatActivity {
 
 
     FrameLayout frameLayout2;
-    TextView tap, high_score;
+    TextView tap, high_score,your_score;
     ImageView bird;
     int bird_x, bird_y, height, width, y_motion, score;
-    boolean gameOver, started;
+    boolean gameOver, started,addStuff;
     FrameLayout.LayoutParams flp_bird;
+    Thread thread, thread2;
+    Handler handler, handler2;
+
     protected void onCreate(Bundle savedInstanceState) {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -57,15 +69,15 @@ public class Activity2 extends AppCompatActivity {
         frameLayout2.addView(tap);
         //High Score
         FrameLayout.LayoutParams frame_hs = new FrameLayout.LayoutParams(
-                1000,100);
+                1000,120);
         frame_hs.setMargins(width/2 - 500,height/6,0,0);
         high_score = new TextView(this);
-        high_score.setText("High Score: 0000000000");
+        high_score.setText("High Score: \n0000000000");
         high_score.setTypeface(Typeface.create("Comic Sans MS", Typeface.NORMAL));
         high_score.setGravity(Gravity.CENTER);
         high_score.setTextSize(18);
         high_score.setTextColor(Color.RED);
-        high_score.setBackgroundColor(Color.GRAY);
+       // high_score.setBackgroundColor(Color.GRAY);
         high_score.setLayoutParams(frame_hs);
         frameLayout2.addView(high_score);
     //wave
@@ -73,7 +85,7 @@ public class Activity2 extends AppCompatActivity {
         //Sun
         FrameLayout.LayoutParams flpSun = new FrameLayout.LayoutParams(
                 100,100);
-        flpSun.setMargins(width - 400 , 100,0,0);
+        flpSun.setMargins(width - 300 , 100,0,0);
         ImageView image = new ImageView(this);
         image.setImageResource(R.drawable.sun);
         image.setLayoutParams(flpSun);
@@ -84,8 +96,6 @@ public class Activity2 extends AppCompatActivity {
         rotate_sun.setRepeatMode(1);
         image.startAnimation(rotate_sun);
 
-
-
         //bird
         flp_bird = new FrameLayout.LayoutParams(
                 150,150);
@@ -94,9 +104,22 @@ public class Activity2 extends AppCompatActivity {
         bird = new ImageView(this);
         bird.setImageResource(R.drawable.bird1);
         bird.setLayoutParams(flp_bird);
-
         frameLayout2.addView(bird);
 
+        thread = new Thread(new MyThread());
+        thread.start();
+        handler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                if (addStuff != true) {
+                    addJetB();
+                    addShip();
+                    addCloud();
+                    addJetY();
+                    addStuff = true;
+                }
+            }
+        };
     }
 
     @Override
@@ -106,32 +129,45 @@ public class Activity2 extends AppCompatActivity {
             frameLayout2.removeView(tap);
             high_score.setTextSize(12);
             high_score.setTextColor(Color.BLUE);
-            high_score.setX(0-250);
+            high_score.setX(10);
+            high_score.setGravity(Gravity.LEFT);
             high_score.setY(20);
             //Your Score
             FrameLayout.LayoutParams frame_score = new FrameLayout.LayoutParams(
                     1000,100);
-            framframe_scoree_hs.setMargins(width/2 - 500,height/6,0,0);
+            frame_score.setMargins(10 ,100,0,0);
             your_score = new TextView(this);
-            your_score.setText("High Score: 0000000000");
-            your_score.setTypeface(Typeface.create("Comic Sans MS", Typeface.NORMAL));
-            your_score.setGravity(Gravity.CENTER);
-            your_score.setTextSize(18);
+            your_score.setText("Score: \n 0000000000");
+            your_score.setTypeface(Typeface.create("Droid-Sans-Mono", Typeface.NORMAL));
+            your_score.setTextSize(14);
+            your_score.setGravity(Gravity.LEFT);
             your_score.setTextColor(Color.RED);
-            your_score.setBackgroundColor(Color.GRAY);
             your_score.setLayoutParams(frame_score);
             frameLayout2.addView(your_score);
+            boolean run_forever = true;
+
+//            thread2 = new Thread(new MyThread2());
+//            thread2.start();
+//            handler2 = new Handler() {
+//                @Override
+//                public void handleMessage(Message msg) {
+//                    if ( y_motion < 15) {
+//                        y_motion += 4;
+//                    }
+//                }
+//            };
+
         }
 
         bird.setY(bird.getY() + y_motion);
+
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
                 fly();
 
                 break;
             case MotionEvent.ACTION_BUTTON_RELEASE:
-                bird.setX(bird.getX());
-                bird.setY(bird.getY() +105);
+               fly();
 
                 break;
         }
@@ -139,6 +175,40 @@ public class Activity2 extends AppCompatActivity {
         return super.onTouchEvent(event);
 
     }
+
+    class MyThread implements Runnable{
+        @Override
+        public void run() {
+            for(int i =0; i<100000;i++){
+                Message message = Message.obtain();
+                handler.sendMessage(message);
+                try {
+                    Thread.sleep(5000);
+                    addStuff = false;
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (i == 100){
+                    i =2;
+                }
+            }
+        }
+    }
+//    class MyThread2 implements Runnable{
+//        @Override
+//        public void run() {
+//            for(int i =0; i<100000;i++){
+//                Message message2 = Message.obtain();
+//                handler2.sendMessage(message2);
+//                try {
+//                    Thread.sleep(50);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//    }
+    ImageView jetY,cloud,jetB,ship;
     public void addWave() {
         //Wave
         for (int i =0 ; i<7; i++){
@@ -180,13 +250,82 @@ public class Activity2 extends AppCompatActivity {
         }
 
     }
-
+    public void addJetY(){
+         jetY = new ImageView(this);
+        jetY.setImageResource(R.drawable.plane2);
+        Random random1 = new Random();
+        int ramdom11 = random1.nextInt(1000-10) + 10;
+        FrameLayout.LayoutParams fl_jet = new FrameLayout.LayoutParams(
+                200, 200);
+        fl_jet.setMargins(width + 100, ramdom11, 0, 0);
+        jetY.setLayoutParams(fl_jet);
+        TranslateAnimation move_jetY = new TranslateAnimation(0, 0-width-400, 0, 0);
+        move_jetY.setDuration(5000);
+        move_jetY.setRepeatCount(0);
+        move_jetY.setRepeatMode(1);
+        jetY.startAnimation(move_jetY);
+        frameLayout2.addView(jetY);
+    }
+    public void addJetB(){
+        jetB = new ImageView(this);
+        jetB.setImageResource(R.drawable.plane1);
+        Random random1 = new Random();
+        int ramdom11 = random1.nextInt(1000-10) + 10;
+        FrameLayout.LayoutParams fl_jet = new FrameLayout.LayoutParams(
+                200, 200);
+        fl_jet.setMargins(width + 100, ramdom11, 0, 0);
+        jetB.setLayoutParams(fl_jet);
+        TranslateAnimation move_jetY = new TranslateAnimation(0, 0-width-400, 0, 0);
+        move_jetY.setDuration(5000);
+        move_jetY.setRepeatCount(0);
+        move_jetY.setRepeatMode(1);
+        jetB.startAnimation(move_jetY);
+        frameLayout2.addView(jetB);
+    }
+    public void addCloud(){
+         cloud = new ImageView(this);
+        cloud.setImageResource(R.drawable.cloud1);
+        Random random1 = new Random();
+        int ramdom11 = random1.nextInt(100-10) + 10;
+        FrameLayout.LayoutParams fl_cloud = new FrameLayout.LayoutParams(
+                200, 200);
+        fl_cloud.setMargins(width + 100, ramdom11, 0, 0);
+        cloud.setLayoutParams(fl_cloud);
+        TranslateAnimation move_cloud = new TranslateAnimation(0, 0-width-400, 0, 0);
+        move_cloud.setDuration(5000);
+        move_cloud.setRepeatCount(0);
+        move_cloud.setRepeatMode(1);
+        cloud.startAnimation(move_cloud);
+        frameLayout2.addView(cloud);
+    }
+    public void addShip(){
+         ship = new ImageView(this);
+        ship.setImageResource(R.drawable.ship2);
+        Random random1 = new Random();
+        int ramdom11 = height-200 + random1.nextInt(10);
+        FrameLayout.LayoutParams fl_ship = new FrameLayout.LayoutParams(
+                200, 200);
+        fl_ship.setMargins(0 - 200, ramdom11, 0, 0);
+        ship.setLayoutParams(fl_ship);
+        TranslateAnimation move_ship = new TranslateAnimation(0, width+600, 0, 0);
+        move_ship.setDuration(5000);
+        move_ship.setRepeatCount(0);
+        move_ship.setRepeatMode(1);
+        ship.startAnimation(move_ship);
+        frameLayout2.addView(ship);
+    }
     public void fly(){
         if(started != true){
             started = true;
         }
 
-            y_motion -= 5;
+            y_motion = -5;
+        }
+
+        public void antiFly(){
+            if(started == true){
+                y_motion += 5;
+            }
         }
 
 
