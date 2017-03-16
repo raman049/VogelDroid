@@ -104,6 +104,7 @@ public class Activity2 extends AppCompatActivity {
         bird = new ImageView(this);
         bird.setImageResource(R.drawable.bird1);
         bird.setLayoutParams(flp_bird);
+        bird.setBackgroundColor(Color.BLACK);
         frameLayout2.addView(bird);
 
         thread = new Thread(new MyThread());
@@ -165,7 +166,7 @@ public class Activity2 extends AppCompatActivity {
 
         }
 
-
+            
 
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
@@ -273,6 +274,7 @@ public class Activity2 extends AppCompatActivity {
         move_jetY.setDuration(4000);
         move_jetY.setRepeatCount(0);
         move_jetY.setRepeatMode(1);
+        jetY.setBackgroundColor(Color.BLACK);
         jetY.startAnimation(move_jetY);
         frameLayout2.addView(jetY);
     }
@@ -291,6 +293,7 @@ public class Activity2 extends AppCompatActivity {
         move_jetY.setDuration(5000);
         move_jetY.setRepeatCount(0);
         move_jetY.setRepeatMode(1);
+        jetB.setBackgroundColor(Color.BLACK);
         jetB.startAnimation(move_jetY);
         frameLayout2.addView(jetB);
     }
