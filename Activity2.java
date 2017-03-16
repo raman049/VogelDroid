@@ -122,7 +122,21 @@ public class Activity2 extends AppCompatActivity {
                 }
             }
         };
+
+
+        //bird gravity motion thread2
+        thread2 = new Thread(new MyThread2());
+        thread2.start();
+        handler2 = new Handler() {
+            @Override
+            public void handleMessage(Message message2) {
+                 gravity();
+                //y_motion = 2 ;
+            }
+        };
+
     }
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -148,32 +162,24 @@ public class Activity2 extends AppCompatActivity {
             frameLayout2.addView(your_score);
             boolean run_forever = true;
 
-//            thread2 = new Thread(new MyThread2());
-//            thread2.start();
-//            handler2 = new Handler() {
-//                @Override
-//                public void handleMessage(Message msg) {
-//                    if ( y_motion < 15) {
-//                        y_motion += 4;
-//                    }
-//                }
-//            };
 
         }
 
-        bird.setY(bird.getY() + y_motion);
+
 
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
                 fly();
-
+                bird.setY(bird.getY() + y_motion);
+                bird.setImageResource(R.drawable.bird2);
                 break;
-            case MotionEvent.ACTION_BUTTON_RELEASE:
-               fly();
+            case MotionEvent.ACTION_CANCEL:
+              // fly();
+               // bird.setImageResource(R.drawable.bird1);
 
                 break;
         }
-
+        bird.setImageResource(R.drawable.bird1);
         return super.onTouchEvent(event);
 
     }
@@ -181,7 +187,7 @@ public class Activity2 extends AppCompatActivity {
     class MyThread implements Runnable{
         @Override
         public void run() {
-            for(int i =0; i<100000;i++){
+            for(int i =0; i<1000;i++){
                 Message message = Message.obtain();
                 handler.sendMessage(message);
                 try {
@@ -196,20 +202,20 @@ public class Activity2 extends AppCompatActivity {
             }
         }
     }
-//    class MyThread2 implements Runnable{
-//        @Override
-//        public void run() {
-//            for(int i =0; i<100000;i++){
-//                Message message2 = Message.obtain();
-//                handler2.sendMessage(message2);
-//                try {
-//                    Thread.sleep(50);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
-//    }
+    class MyThread2 implements Runnable{
+        @Override
+        public void run() {
+            for(int i =0; i<10000;i++){
+                Message message2 = Message.obtain();
+                handler2.sendMessage(message2);
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
     ImageView jetY,cloud1,cloud2,cloud3,jetB,ship;
     public void addWave() {
         //Wave
@@ -293,7 +299,7 @@ public class Activity2 extends AppCompatActivity {
         cloud1.setImageResource(R.drawable.cloud1);
         Random random1y = new Random();
         Random random1x = new Random();
-        int random11x = width + random1y.nextInt(width);
+        int random11x = width + random1x.nextInt(width);
         int random11y = random1y.nextInt(100-10) + 10;
         FrameLayout.LayoutParams fl_cloud = new FrameLayout.LayoutParams(
                 200, 200);
@@ -363,9 +369,14 @@ public class Activity2 extends AppCompatActivity {
             started = true;
         }
 
-            y_motion = -5;
-        }
+            y_motion = -40;
 
+        }
+    public void gravity(){
+        if(started == true) {
+            bird.setY(bird.getY() + 7);
+        }
+    }
 
 
 
