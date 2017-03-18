@@ -31,37 +31,46 @@ public class Activity3 extends AppCompatActivity {
 
         //setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        // Creating a new FrameLayout
         frameLayout3 = new FrameLayout(this);
-        frameLayout3.setBackgroundColor(Color.GRAY);
-//        //Remove title bar
+        frameLayout3.setBackgroundColor(Color.argb(255,0,0,200));
         requestWindowFeature(Window.FEATURE_NO_TITLE);
        getSupportActionBar().hide();
        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
-//        // Setting the RelativeLayout as our content view
+//  Setting the RelativeLayout as our content view
         setContentView(frameLayout3);
         int width = this.getResources().getDisplayMetrics().widthPixels;
         int height = this.getResources().getDisplayMetrics().heightPixels;
-        FrameLayout.LayoutParams flp = new FrameLayout.LayoutParams(
+  //  HIGH SCORE
+        FrameLayout.LayoutParams flpHighScore=new FrameLayout.LayoutParams(1000,320);
+        flpHighScore.setMargins(width/3-500,height/10,0,0);
+        TextView highScore = new TextView(this);
+        highScore.setText("High Score: \n 000000000");
+        highScore.setTypeface(Typeface.create("sans-serif-thin", Typeface.NORMAL));
+        highScore.setGravity(Gravity.CENTER);
+        highScore.setTextColor(Color.YELLOW);
+        highScore.setTextSize(20);
+        highScore.setLayoutParams(flpHighScore);
+        frameLayout3.addView(highScore);
+ //  PRESENT SCORE
+        FrameLayout.LayoutParams flpScore = new FrameLayout.LayoutParams(
                 1000, 320);
-        flp.setMargins(width / 2 - 500, height / 6, 0, 0);
-//        // Creating a new TextView
-        TextView tv = new TextView(this);
-        tv.setText("VOGEL");
-        tv.setTypeface(Typeface.create("sans-serif-thin", Typeface.NORMAL));
-        tv.setGravity(Gravity.CENTER);
-        tv.setTextColor(Color.BLUE);
-        tv.setTextSize(100);
-       tv.setLayoutParams(flp);
-        frameLayout3.addView(tv);
-
+        flpScore.setMargins(width-width/3-500,height/10,0,0);
+        TextView presentScore = new TextView(this);
+        presentScore.setText("Your Score: \n 000000000");
+        presentScore.setTypeface(Typeface.create("sans-serif-thin",Typeface.NORMAL));
+        presentScore.setGravity(Gravity.CENTER);
+        presentScore.setTextColor(Color.YELLOW);
+        presentScore.setTextSize(20);
+        presentScore.setLayoutParams(flpScore);
+        frameLayout3.addView(presentScore);
+ // REPLAY
         FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(150, 150);
-        lp.setMargins(width / 2 - 75, height / 2, 0, 0);
-        ImageButton playButton = new ImageButton(this);
-        playButton.setLayoutParams(lp);
-        playButton.setBackgroundResource(R.drawable.play);
-        playButton.setOnClickListener(new View.OnClickListener() {
+        lp.setMargins(width - 165, height-170, 0, 0);
+        ImageButton replayButton = new ImageButton(this);
+        replayButton.setLayoutParams(lp);
+        replayButton.setBackgroundResource(R.drawable.replay);
+        replayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //Connect();
@@ -71,20 +80,8 @@ public class Activity3 extends AppCompatActivity {
                 // toast.show();
             }
         });
-        frameLayout3.addView(playButton);
-
-        TextView highScore = new TextView(this);
-        FrameLayout.LayoutParams lpHS = new FrameLayout.LayoutParams(700, 150);
-        lpHS.setMargins(width / 2 - 350, height - 200, 0, 0);
-        highScore.setText("HIGH SCORE");
-
-        highScore.setTypeface(Typeface.create("Comic Sans MS", Typeface.NORMAL));
-        highScore.setGravity(Gravity.CENTER);
-        highScore.setTextColor(Color.YELLOW);
-        highScore.setTextSize(25);
-        highScore.setLayoutParams(lpHS);
-        frameLayout3.addView(highScore);
-
+        frameLayout3.addView(replayButton);
+///INSTRUCTION
         final ImageButton instruction = new ImageButton(this);
         popUpWindow = new PopupWindow(this);
         FrameLayout.LayoutParams lpInst = new FrameLayout.LayoutParams(150, 150);
@@ -114,7 +111,7 @@ public class Activity3 extends AppCompatActivity {
         FrameLayout.LayoutParams lpbackButton = new FrameLayout.LayoutParams(150, 160);
         lpbackButton.setMargins(10, 10, 0, 0);
         backButton.setLayoutParams(lpbackButton);
-        backButton.setBackgroundResource(R.drawable.back);
+        backButton.setBackgroundResource(R.drawable.close);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -125,11 +122,24 @@ public class Activity3 extends AppCompatActivity {
         });
         popupFrame.addView(backButton);
         popUpWindow.setContentView(popupFrame);
-
-
+  //FB BUTTON
+        FrameLayout.LayoutParams lpFb = new FrameLayout.LayoutParams(150, 150);
+        lpFb.setMargins(10, height-330, 0, 0);
+        ImageButton fbButton = new ImageButton(this);
+        fbButton.setLayoutParams(lpFb);
+        fbButton.setBackgroundResource(R.drawable.fblogo);
+        fbButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast toast = Toast.makeText(Activity3.this, "You clicked FB button " + v.getId(), Toast.LENGTH_LONG);
+                toast.show();
+            }
+        });
+        frameLayout3.addView(fbButton);
+//  SCOREBOARD BUTTON
         scoreboard = new ImageButton(this);
         FrameLayout.LayoutParams lpscoreb = new FrameLayout.LayoutParams(150, 150);
-        lpscoreb.setMargins(170, height - 170, 0, 0);
+        lpscoreb.setMargins(170,height-170,0,0);
         scoreboard.setLayoutParams(lpscoreb);
         scoreboard.setBackgroundResource(R.drawable.scoreboard);
         scoreboard.setOnClickListener(new View.OnClickListener() {
@@ -140,6 +150,14 @@ public class Activity3 extends AppCompatActivity {
             }
         });
         frameLayout3.addView(scoreboard);
+//  BIRD IMAGE
+        ImageView injured_bird = new ImageView(this);
+        injured_bird.setImageResource(R.drawable.injuredbird);
+        FrameLayout.LayoutParams lp_injured_bird = new FrameLayout.LayoutParams(800,800);
+        lp_injured_bird.setMargins(width/2-400,height/10+150,0,0);
+        injured_bird.setLayoutParams(lp_injured_bird);
+        frameLayout3.addView(injured_bird);
+
 
     }
 
