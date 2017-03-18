@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
         FrameLayout.LayoutParams lpbackButton = new FrameLayout.LayoutParams(150, 160);
         lpbackButton.setMargins(10,10,0,0);
         backButton.setLayoutParams(lpbackButton);
-        backButton.setBackgroundResource(R.drawable.back);
+        backButton.setBackgroundResource(R.drawable.close);
         backButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
