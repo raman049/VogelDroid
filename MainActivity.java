@@ -1,4 +1,4 @@
-package com.vogelplay.vogel;
+package com.vogelplay.vogel3;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
 
     PopupWindow popUpWindow;
     ImageButton scoreboard;
-     FrameLayout frameLayout;
+    FrameLayout frameLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -44,11 +44,11 @@ public class MainActivity extends AppCompatActivity {
         int height = this.getResources().getDisplayMetrics().heightPixels;
         FrameLayout.LayoutParams flp = new FrameLayout.LayoutParams(
                 1000,320);
-        flp.setMargins(width/2 - 500,height/5,0,0);
+        flp.setMargins(width/2 - 500,height/6,0,0);
         // Creating a new TextView
         TextView tv = new TextView(this);
         tv.setText("VOGEL");
-        tv.setTypeface(Typeface.create("Comic Sans MS", Typeface.NORMAL));
+        tv.setTypeface(Typeface.create("sans-serif-thin", Typeface.NORMAL));
         tv.setGravity(Gravity.CENTER);
         tv.setTextColor(Color.BLUE);
         tv.setTextSize(100);
@@ -63,18 +63,15 @@ public class MainActivity extends AppCompatActivity {
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Connect();
                 Intent i = new Intent(MainActivity.this,Activity2.class);
                 startActivity(i);
-                //Toast toast = Toast.makeText(MainActivity.this, "You clicked button " + v.getId(), Toast.LENGTH_LONG);
-               // toast.show();
             }
         });
         frameLayout.addView(playButton);
 
         TextView highScore = new TextView(this);
         FrameLayout.LayoutParams lpHS = new FrameLayout.LayoutParams(700, 150);
-        lpHS.setMargins(width/2 - 350,height - 150 ,0,0);
+        lpHS.setMargins(width/2 - 350,height - 200 ,0,0);
         highScore.setText("HIGH SCORE");
 
         highScore.setTypeface(Typeface.create("Comic Sans MS", Typeface.NORMAL));
@@ -84,12 +81,12 @@ public class MainActivity extends AppCompatActivity {
         highScore.setLayoutParams(lpHS);
         frameLayout.addView(highScore);
 
-         final ImageButton instruction = new ImageButton(this);
-         popUpWindow = new PopupWindow(this);
+        final ImageButton instruction = new ImageButton(this);
+        popUpWindow = new PopupWindow(this);
         FrameLayout.LayoutParams lpInst = new FrameLayout.LayoutParams(150, 150);
         lpInst.setMargins(10,height-170,0,0);
         instruction.setLayoutParams(lpInst);
-        instruction.setBackgroundResource(R.drawable.instruction_que);
+        instruction.setBackgroundResource(R.drawable.instructionque);
         frameLayout.addView(instruction);
         instruction.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -97,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
                 instruction.invalidate();
                 scoreboard.invalidate();
                 popUpWindow.showAtLocation(frameLayout,Gravity.CENTER,0,0);
-               final String ss="skdjf";
+                final String ss="skdjf";
                 Log.d(ss,"onClick");
             }
         });
@@ -119,14 +116,14 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 instruction.isActivated();
                 scoreboard.isActivated();
-               popUpWindow.dismiss();
+                popUpWindow.dismiss();
             }
         });
         popupFrame.addView(backButton);
         popUpWindow.setContentView(popupFrame);
 
 
-         scoreboard = new ImageButton(this);
+        scoreboard = new ImageButton(this);
         FrameLayout.LayoutParams lpscoreb = new FrameLayout.LayoutParams(150, 150);
         lpscoreb.setMargins(170,height-170,0,0);
         scoreboard.setLayoutParams(lpscoreb);
@@ -147,5 +144,8 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
     }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 }
