@@ -1,8 +1,12 @@
 package com.vogelplay.vogel3;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,6 +18,7 @@ import android.support.v7.view.ActionMode;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.RotateAnimation;
@@ -39,8 +44,9 @@ public class Activity2 extends AppCompatActivity {
     int bird_x, bird_y, height, width, y_motion, score;
     boolean gameOver, started,addStuff;
     FrameLayout.LayoutParams flp_bird;
-    Thread thread, thread2;
-    Handler handler, handler2;
+    Thread thread, thread2, collision_thread;
+    Handler handler, handler2,handler3;
+    Rect bird_rect,jet_y_rect, jet_b_rect;
 
     protected void onCreate(Bundle savedInstanceState) {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
@@ -51,6 +57,8 @@ public class Activity2 extends AppCompatActivity {
         frameLayout2 = new FrameLayout(this);
         frameLayout2.setBackgroundColor(Color.argb(255,153,204,255));
         setContentView(frameLayout2);
+//        drawView = new DrawView(this);
+//        frameLayout2.addView(drawView);
         super.onCreate(savedInstanceState);
          width = this.getResources().getDisplayMetrics().widthPixels;
          height = this.getResources().getDisplayMetrics().heightPixels;
@@ -98,7 +106,7 @@ public class Activity2 extends AppCompatActivity {
 
         //bird
         flp_bird = new FrameLayout.LayoutParams(
-                150,150);
+                100,100);
         bird_x = width/3; bird_y= height/2;
         flp_bird.setMargins(bird_x , bird_y,width/3 + 200,height/2 + 200);
         bird = new ImageView(this);
@@ -106,6 +114,7 @@ public class Activity2 extends AppCompatActivity {
         bird.setLayoutParams(flp_bird);
         bird.setBackgroundColor(Color.BLACK);
         frameLayout2.addView(bird);
+       // bird_rect = new Rect(Math.round(bird.getX()),Math.round(bird.getY()), Math.round(bird.getX()) + 200, Math.round(bird.getY())+200);
 
         thread = new Thread(new MyThread());
         thread.start();
@@ -123,7 +132,9 @@ public class Activity2 extends AppCompatActivity {
                 }
             }
         };
-
+        bird_rect = new Rect(0,0,0,0);
+        jet_b_rect = new Rect(0,0,0,0);
+        jet_y_rect = new Rect(0,0,0,0);
 
         //bird gravity motion thread2
         thread2 = new Thread(new MyThread2());
@@ -132,17 +143,45 @@ public class Activity2 extends AppCompatActivity {
             @Override
             public void handleMessage(Message message2) {
                  gravity();
-                //y_motion = 2 ;
+            }
+        };
+        collision_thread = new Thread(new CollisionThread());
+        collision_thread.start();
+        handler3 = new Handler() {
+            @Override
+            public void handleMessage(Message message3) {
+                //gravity();
+                 checkCollision();
             }
         };
 
+
     }
+
+//    @Override
+//    protected void onResume() {
+//        Intent iii = new Intent(Activity2.this,MainActivity.class);
+//        startActivity(iii);
+//        super.onResume();
+//    }
 
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
+    protected void onRestart() {
+        Intent iii = new Intent(Activity2.this,MainActivity.class);
+        startActivity(iii);
+        super.onRestart();
+    }
 
-        if(started == true) {
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (gameOver == true){
+            Intent ii = new Intent(Activity2.this,Activity3.class);
+            startActivity(ii);
+        }
+
+
+        if (started == true) {
             frameLayout2.removeView(tap);
             high_score.setTextSize(12);
             high_score.setTextColor(Color.BLUE);
@@ -151,8 +190,8 @@ public class Activity2 extends AppCompatActivity {
             high_score.setY(20);
             //Your Score
             FrameLayout.LayoutParams frame_score = new FrameLayout.LayoutParams(
-                    1000,100);
-            frame_score.setMargins(10 ,100,0,0);
+                    1000, 100);
+            frame_score.setMargins(10, 100, 0, 0);
             your_score = new TextView(this);
             your_score.setText("Score: \n 0000000000");
             your_score.setTypeface(Typeface.create("Droid-Sans-Mono", Typeface.NORMAL));
@@ -161,28 +200,25 @@ public class Activity2 extends AppCompatActivity {
             your_score.setTextColor(Color.RED);
             your_score.setLayoutParams(frame_score);
             frameLayout2.addView(your_score);
-            boolean run_forever = true;
 
 
         }
 
-            
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    fly();
+                   // bird.setY(bird.getY() + y_motion);
+                  //  bird.setImageResource(R.drawable.bird2);
+                    break;
+                case MotionEvent.ACTION_CANCEL:
+                    // fly();
+                    // bird.setImageResource(R.drawable.bird1);
 
-        switch (event.getAction()){
-            case MotionEvent.ACTION_DOWN:
-                fly();
-                bird.setY(bird.getY() + y_motion);
-                bird.setImageResource(R.drawable.bird2);
-                break;
-            case MotionEvent.ACTION_CANCEL:
-              // fly();
-               // bird.setImageResource(R.drawable.bird1);
+                    break;
+            }
+            bird.setImageResource(R.drawable.bird1);
 
-                break;
-        }
-        bird.setImageResource(R.drawable.bird1);
-        return super.onTouchEvent(event);
-
+         return super.onTouchEvent(event);
     }
 
     class MyThread implements Runnable{
@@ -210,7 +246,21 @@ public class Activity2 extends AppCompatActivity {
                 Message message2 = Message.obtain();
                 handler2.sendMessage(message2);
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(75);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+    class CollisionThread implements Runnable{
+        @Override
+        public void run() {
+            for(int i =0; i<10000;i++){
+                Message message3 = Message.obtain();
+                handler3.sendMessage(message3);
+                try {
+                    Thread.sleep(75);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -277,6 +327,7 @@ public class Activity2 extends AppCompatActivity {
         jetY.setBackgroundColor(Color.BLACK);
         jetY.startAnimation(move_jetY);
         frameLayout2.addView(jetY);
+
     }
     public void addJetB(){
         jetB = new ImageView(this);
@@ -289,12 +340,12 @@ public class Activity2 extends AppCompatActivity {
                 200, 200);
         fl_jet.setMargins(random11x, random11y, 0, 0);
         jetB.setLayoutParams(fl_jet);
-        TranslateAnimation move_jetY = new TranslateAnimation(0, 0-width*2, 0, 0);
-        move_jetY.setDuration(5000);
-        move_jetY.setRepeatCount(0);
-        move_jetY.setRepeatMode(1);
+        TranslateAnimation move_jetB = new TranslateAnimation(0, 0-width*2, 0, 0);
+        move_jetB.setDuration(5000);
+        move_jetB.setRepeatCount(0);
+        move_jetB.setRepeatMode(1);
         jetB.setBackgroundColor(Color.BLACK);
-        jetB.startAnimation(move_jetY);
+        jetB.startAnimation(move_jetB);
         frameLayout2.addView(jetB);
     }
     public void addCloud1(){
@@ -371,17 +422,72 @@ public class Activity2 extends AppCompatActivity {
         if(started != true){
             started = true;
         }
-
-            y_motion = -40;
-
+            y_motion = -60;
+        bird.setY(bird.getY() + y_motion);
         }
     public void gravity(){
         if(started == true) {
-            bird.setY(bird.getY() + 7);
+            bird.setY(bird.getY() + 15);
         }
     }
 
+    public void checkCollision(){
 
+        if (started == true) {
+           // bird_rect.set((Math.round(bird.getX()) - 100),(Math.round(bird.getY()) - 100),(Math.round(bird.getX()) + 100),(Math.round(bird.getY()) + 100));
+            Rect a  = new Rect(Math.round(bird.getX()), Math.round(bird.getY()), Math.round(bird.getX()) + 200, Math.round(bird.getY()) + 200);
+            //jet_b_rect.set(Math.round(jetB.getX())-100, Math.round(jetB.getY())-100, Math.round(jetB.getX()) + 100, Math.round(jetB.getY()) + 100);
+            Rect b = new Rect(Math.round(jetB.getX()), Math.round(jetB.getY()), Math.round(jetB.getX()) + 200, Math.round(jetB.getY()) + 200);
+            FrameLayout.LayoutParams rect_frame = new FrameLayout.LayoutParams(
+                    200, 200);
+            rect_frame.setMargins(Math.round(jetB.getX()), Math.round(jetB.getY()), Math.round(jetB.getX()) + 200, Math.round(jetB.getY()) + 200);
+            cloud1 = new ImageView(this);
+            cloud1.setImageResource(R.drawable.wave2);
+            cloud1.setLayoutParams(rect_frame);
+            frameLayout2.addView(cloud1);
+            //  s(random11x, random11y, 0, 0);
+            // jet_y_rect = new Rect(Math.round(jetY.getX()), Math.round(jetY.getY()), Math.round(jetY.getX()) + 200, Math.round(jetY.getY()) + 200);
+            //  frameLayout2.addView(bird_rect);
+            if ((bird.getY() > (height - 300)) || (bird.getY() < (0))) {
+                jetB.setBackgroundColor(Color.CYAN);
+               gameOver = true;
+            }
+           else {
+                jetB.setBackgroundColor(Color.BLUE);
+            }
+
+
+            if(a.intersect(b)){
+                jetY.setBackgroundColor(Color.RED);
+            }
+
+        }
+
+   }
+
+//    public class DrawView extends View {
+//        Paint paint = new Paint();
+//
+//        public DrawView(Context context) {
+//            super(context);
+//        }
+//
+//        @Override
+//        public void onDraw(Canvas canvas) {
+//            paint.setColor(Color.argb(255,153,204,255));
+//            bird_rect = new Rect(Math.round(bird.getX()) ,Math.round(bird.getY()), Math.round(bird.getX()) + 200, Math.round(bird.getY())+200);
+//            jet_b_rect = new Rect(Math.round(jetB.getX()),Math.round(jetB.getY()), Math.round(jetB.getX()) + 200, Math.round(jetB.getY())+200);
+//            jet_y_rect = new Rect(Math.round(jetY.getX()),Math.round(jetY.getY()), Math.round(jetY.getX()) + 200, Math.round(jetY.getY())+200);
+//
+//    canvas.drawRect(0, 0, width, height, paint);
+//    paint.setColor(Color.RED);
+//    canvas.drawRect(bird_rect, paint);
+//    canvas.drawRect(jet_b_rect, paint);
+//    canvas.drawRect(jet_y_rect, paint);
+//
+//        }
+//
+//    }
 
 
 
