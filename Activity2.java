@@ -63,15 +63,16 @@ public class Activity2 extends AppCompatActivity {
          width = this.getResources().getDisplayMetrics().widthPixels;
          height = this.getResources().getDisplayMetrics().heightPixels;
         FrameLayout.LayoutParams flpTtoS = new FrameLayout.LayoutParams(
-                1000,200);
-        flpTtoS.setMargins(width/2 - 550,height/2 -200,0,0);
+                1500,250);
+        flpTtoS.setMargins(width/2 - 750,height/2 -200,0,0);
         // Creating a new TextView
         tap = new TextView(this);
         tap.setText("Tap To Start");
-        tap.setTypeface(Typeface.create("Comic Sans MS", Typeface.NORMAL));
+        Typeface face=Typeface.createFromAsset(getAssets(),"fonts/comici.ttf");
+        tap.setTypeface(face);
         tap.setGravity(Gravity.CENTER);
         tap.setTextColor(Color.YELLOW);
-        tap.setTextSize(50);
+        tap.setTextSize(70);
         tap.setBackgroundColor(Color.GRAY);
         tap.setLayoutParams(flpTtoS);
         frameLayout2.addView(tap);
@@ -81,7 +82,7 @@ public class Activity2 extends AppCompatActivity {
         frame_hs.setMargins(width/2 - 500,height/6,0,0);
         high_score = new TextView(this);
         high_score.setText("High Score: \n0000000000");
-        high_score.setTypeface(Typeface.create("Comic Sans MS", Typeface.NORMAL));
+        high_score.setTypeface(face);
         high_score.setGravity(Gravity.CENTER);
         high_score.setTextSize(18);
         high_score.setTextColor(Color.RED);
@@ -194,7 +195,8 @@ public class Activity2 extends AppCompatActivity {
             frame_score.setMargins(10, 100, 0, 0);
             your_score = new TextView(this);
             your_score.setText("Score: \n 0000000000");
-            your_score.setTypeface(Typeface.create("Droid-Sans-Mono", Typeface.NORMAL));
+            Typeface face=Typeface.createFromAsset(getAssets(),"fonts/comici.ttf");
+            your_score.setTypeface(face);
             your_score.setTextSize(14);
             your_score.setGravity(Gravity.LEFT);
             your_score.setTextColor(Color.RED);
