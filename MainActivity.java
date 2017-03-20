@@ -45,16 +45,19 @@ public class MainActivity extends AppCompatActivity {
         FrameLayout.LayoutParams flp = new FrameLayout.LayoutParams(
                 1000,320);
         flp.setMargins(width/2 - 500,height/6,0,0);
-        // Creating a new TextView
+ // TEXT_VIEW VOGEL
         TextView tv = new TextView(this);
         tv.setText("VOGEL");
-        tv.setTypeface(Typeface.create("sans-serif-thin", Typeface.NORMAL));
+        Typeface face=Typeface.createFromAsset(getAssets(),"fonts/COMIC.TTF");
+        tv.setTypeface(face);
+
+                //(Typeface.create("Droid Sans", Typeface.NORMAL));
         tv.setGravity(Gravity.CENTER);
         tv.setTextColor(Color.BLUE);
         tv.setTextSize(100);
         tv.setLayoutParams(flp);
         frameLayout.addView(tv);
-
+ // PLAY BUTTON
         FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(150, 150);
         lp.setMargins(width/2 - 75,height/2,0,0);
         ImageButton playButton = new ImageButton(this);
@@ -68,13 +71,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         frameLayout.addView(playButton);
-
+ // HIGHSCORE TEXT
         TextView highScore = new TextView(this);
         FrameLayout.LayoutParams lpHS = new FrameLayout.LayoutParams(700, 150);
         lpHS.setMargins(width/2 - 350,height - 200 ,0,0);
         highScore.setText("HIGH SCORE");
 
-        highScore.setTypeface(Typeface.create("Comic Sans MS", Typeface.NORMAL));
+        highScore.setTypeface(face);
         highScore.setGravity(Gravity.CENTER);
         highScore.setTextColor(Color.YELLOW);
         highScore.setTextSize(25);
