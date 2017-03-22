@@ -1,24 +1,16 @@
 package com.vogelplay.vogel3;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.ActionMode;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.RotateAnimation;
@@ -26,10 +18,8 @@ import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+//import android.*;
 import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * Created by maharjan on 3/9/17.
@@ -44,8 +34,8 @@ public class Activity2 extends AppCompatActivity {
     int bird_x, bird_y, height, width, y_motion, score;
     boolean gameOver, started,addStuff;
     FrameLayout.LayoutParams flp_bird;
-    Thread thread, thread2, collision_thread;
-    Handler handler, handler2,handler3;
+    Thread thread, gravity_thread, collision_thread;
+    Handler handler, handler2,collision_handler;
     Rect bird_rect,jet_y_rect, jet_b_rect;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,15 +53,16 @@ public class Activity2 extends AppCompatActivity {
          width = this.getResources().getDisplayMetrics().widthPixels;
          height = this.getResources().getDisplayMetrics().heightPixels;
         FrameLayout.LayoutParams flpTtoS = new FrameLayout.LayoutParams(
-                1000,200);
-        flpTtoS.setMargins(width/2 - 550,height/2 -200,0,0);
+                1500,250);
+        flpTtoS.setMargins(width/2 - 750,height/2 -200,0,0);
         // Creating a new TextView
         tap = new TextView(this);
         tap.setText("Tap To Start");
-        tap.setTypeface(Typeface.create("Comic Sans MS", Typeface.NORMAL));
+        Typeface face=Typeface.createFromAsset(getAssets(),"fonts/comici.ttf");
+        tap.setTypeface(face);
         tap.setGravity(Gravity.CENTER);
         tap.setTextColor(Color.YELLOW);
-        tap.setTextSize(50);
+        tap.setTextSize(70);
         tap.setBackgroundColor(Color.GRAY);
         tap.setLayoutParams(flpTtoS);
         frameLayout2.addView(tap);
@@ -81,15 +72,14 @@ public class Activity2 extends AppCompatActivity {
         frame_hs.setMargins(width/2 - 500,height/6,0,0);
         high_score = new TextView(this);
         high_score.setText("High Score: \n0000000000");
-        high_score.setTypeface(Typeface.create("Comic Sans MS", Typeface.NORMAL));
+        high_score.setTypeface(face);
         high_score.setGravity(Gravity.CENTER);
         high_score.setTextSize(18);
         high_score.setTextColor(Color.RED);
        // high_score.setBackgroundColor(Color.GRAY);
         high_score.setLayoutParams(frame_hs);
         frameLayout2.addView(high_score);
-    //wave
-        addWave();
+
         //Sun
         FrameLayout.LayoutParams flpSun = new FrameLayout.LayoutParams(
                 100,100);
@@ -116,12 +106,11 @@ public class Activity2 extends AppCompatActivity {
         frameLayout2.addView(bird);
        // bird_rect = new Rect(Math.round(bird.getX()),Math.round(bird.getY()), Math.round(bird.getX()) + 200, Math.round(bird.getY())+200);
 
-        thread = new Thread(new MyThread());
-        thread.start();
+
         handler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
-                if (addStuff != true) {
+               // if (addStuff != true) {
                     addJetB();
                     addShip();
                     addCloud1();
@@ -129,32 +118,39 @@ public class Activity2 extends AppCompatActivity {
                     addCloud3();
                     addJetY();
                     addStuff = true;
-                }
+              //  }
             }
         };
+        thread = new Thread(new MyThread());
+        thread.start();
         bird_rect = new Rect(0,0,0,0);
         jet_b_rect = new Rect(0,0,0,0);
         jet_y_rect = new Rect(0,0,0,0);
 
         //bird gravity motion thread2
-        thread2 = new Thread(new MyThread2());
-        thread2.start();
+
         handler2 = new Handler() {
             @Override
             public void handleMessage(Message message2) {
                  gravity();
             }
         };
-        collision_thread = new Thread(new CollisionThread());
-        collision_thread.start();
-        handler3 = new Handler() {
+        gravity_thread = new Thread(new Gravity_Thread());
+        gravity_thread.start();
+
+
+
+        collision_handler = new Handler() {
             @Override
             public void handleMessage(Message message3) {
                 //gravity();
                  checkCollision();
             }
         };
-
+        collision_thread = new Thread(new CollisionThread());
+        collision_thread.start();
+        //wave
+        addWave();
 
     }
 
@@ -194,7 +190,8 @@ public class Activity2 extends AppCompatActivity {
             frame_score.setMargins(10, 100, 0, 0);
             your_score = new TextView(this);
             your_score.setText("Score: \n 0000000000");
-            your_score.setTypeface(Typeface.create("Droid-Sans-Mono", Typeface.NORMAL));
+            Typeface face=Typeface.createFromAsset(getAssets(),"fonts/comici.ttf");
+            your_score.setTypeface(face);
             your_score.setTextSize(14);
             your_score.setGravity(Gravity.LEFT);
             your_score.setTextColor(Color.RED);
@@ -221,28 +218,29 @@ public class Activity2 extends AppCompatActivity {
          return super.onTouchEvent(event);
     }
 
-    class MyThread implements Runnable{
+    class MyThread extends Thread {
         @Override
         public void run() {
-            for(int i =0; i<1000;i++){
+            for(int i =0; i<100;i++){
                 Message message = Message.obtain();
+                message.arg1 = i;
                 handler.sendMessage(message);
-                try {
+               try {
                     Thread.sleep(5000);
-                    addStuff = false;
+                   // addStuff = false;
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                }
-                if (i == 100){
+               }
+                if (i == 98){
                     i =2;
                 }
             }
         }
     }
-    class MyThread2 implements Runnable{
+    class Gravity_Thread implements Runnable{
         @Override
         public void run() {
-            for(int i =0; i<10000;i++){
+            for(int i =0; i<100;i++){
                 Message message2 = Message.obtain();
                 handler2.sendMessage(message2);
                 try {
@@ -250,19 +248,26 @@ public class Activity2 extends AppCompatActivity {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                if (i == 98){
+                    i =2;
+                }
             }
         }
     }
     class CollisionThread implements Runnable{
         @Override
         public void run() {
-            for(int i =0; i<10000;i++){
+            for(int i =0; i<100;i++){
                 Message message3 = Message.obtain();
-                handler3.sendMessage(message3);
+                collision_handler.sendMessage(message3);
                 try {
                     Thread.sleep(75);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
+
+                }
+                if (i == 98){
+                    i =2;
                 }
             }
         }
@@ -285,11 +290,10 @@ public class Activity2 extends AppCompatActivity {
                     400, 200);
             flpWave.setMargins((390*i)-400, height - 170, 0, 0);
             wave.setLayoutParams(flpWave);
-            TranslateAnimation move_wave = new TranslateAnimation(0, 600, 0, 0);
-            move_wave.setDuration(1000);
+            TranslateAnimation move_wave = new TranslateAnimation(0, 2*width+600, 0, 0);
+            move_wave.setDuration(4000);
             move_wave.setRepeatCount(-1);
-            move_wave.setRepeatMode(1);
-            move_wave.setFillBefore(true);
+           // move_wave.setRepeatMode(2);
             wave.startAnimation(move_wave);
             frameLayout2.addView(wave);
 
@@ -297,15 +301,49 @@ public class Activity2 extends AppCompatActivity {
             wave2.setImageResource(R.drawable.wave2);
             FrameLayout.LayoutParams flpWave2 = new FrameLayout.LayoutParams(
                     400, 200);
-            flpWave2.setMargins((400*i)-605, height - 170, 0, 0);
+            flpWave2.setMargins((400*i)-605-width, height - 170, 0, 0);
             wave2.setLayoutParams(flpWave2);
-            TranslateAnimation move_wave2 = new TranslateAnimation(0, 600, 0, 0);
-            move_wave2.setDuration(800);
+            TranslateAnimation move_wave2 = new TranslateAnimation(0, 600 + 2*width, 0, 0);
+            move_wave2.setDuration(4000);
             move_wave2.setRepeatCount(-1);
-            move_wave2.setRepeatMode(1);
-            move_wave2.getFillAfter();
             wave2.startAnimation(move_wave2);
             frameLayout2.addView(wave2);
+
+            ImageView wave3 = new ImageView(this);
+            wave3.setImageResource(R.drawable.wave2);
+            FrameLayout.LayoutParams flpWave3 = new FrameLayout.LayoutParams(
+                    400, 200);
+            flpWave2.setMargins((400*i)-605-width, height - 170, 0, 0);
+            wave3.setLayoutParams(flpWave2);
+            TranslateAnimation move_wave3 = new TranslateAnimation(0, 300 + width, 0, 0);
+            move_wave3.setDuration(2000);
+            move_wave3.setRepeatCount(-1);
+            wave3.startAnimation(move_wave3);
+            frameLayout2.addView(wave3);
+
+            ImageView wave4 = new ImageView(this);
+            wave4.setImageResource(R.drawable.wave2);
+            FrameLayout.LayoutParams flpWave4 = new FrameLayout.LayoutParams(
+                    400, 200);
+            flpWave4.setMargins((400*i)-605+width/3, height - 170, 0, 0);
+            wave4.setLayoutParams(flpWave4);
+            TranslateAnimation move_wave4 = new TranslateAnimation(0, 300 +width, 0, 0);
+            move_wave4.setDuration(2000);
+            move_wave4.setRepeatCount(-1);
+            wave4.startAnimation(move_wave4);
+            frameLayout2.addView(wave4);
+
+            ImageView wave_1 = new ImageView(this);
+            wave.setImageResource(R.drawable.wave2);
+            FrameLayout.LayoutParams flpWave_1 = new FrameLayout.LayoutParams(
+                    400, 200);
+            flpWave_1.setMargins((390*i)-400, height - 170, 0, 0);
+            wave_1.setLayoutParams(flpWave_1);
+            TranslateAnimation move_wave_1 = new TranslateAnimation(0, width+2000, 0, 0);
+            move_wave_1.setDuration(3000);
+            move_wave_1.setRepeatCount(-1);
+            wave_1.startAnimation(move_wave_1);
+            frameLayout2.addView(wave_1);
         }
 
     }
@@ -354,13 +392,13 @@ public class Activity2 extends AppCompatActivity {
         Random random1y = new Random();
         Random random1x = new Random();
         int random11x = width + random1x.nextInt(width);
-        int random11y = random1y.nextInt(100-10) + 10;
+        int random11y = random1x.nextInt(width/12);
         FrameLayout.LayoutParams fl_cloud = new FrameLayout.LayoutParams(
-                200, 200);
+                292*3/2, 162*3/2);
         fl_cloud.setMargins(random11x, random11y, 0, 0);
         cloud1.setLayoutParams(fl_cloud);
-        TranslateAnimation move_cloud = new TranslateAnimation(0, 0-width*2 + 300, 0, 0);
-        move_cloud.setDuration(5000);
+        TranslateAnimation move_cloud = new TranslateAnimation(0, 0-width*3, 0, 0);
+        move_cloud.setDuration(8000);
         move_cloud.setRepeatCount(0);
         move_cloud.setRepeatMode(1);
         cloud1.startAnimation(move_cloud);
@@ -371,14 +409,14 @@ public class Activity2 extends AppCompatActivity {
         cloud2.setImageResource(R.drawable.cloud2);
         Random random1y = new Random();
         Random random1x = new Random();
-        int random11x = width + random1x.nextInt(width);
+        int random11x = width*3/2 + random1x.nextInt(width);
         int random11y = random1y.nextInt(100-10) + 10;
         FrameLayout.LayoutParams fl_cloud2 = new FrameLayout.LayoutParams(
-                200, 200);
+                298*3/2, 158*3/2);
         fl_cloud2.setMargins(random11x, random11y, 0, 0);
         cloud2.setLayoutParams(fl_cloud2);
-        TranslateAnimation move_cloud2 = new TranslateAnimation(0, 0-width*2 + 300, 0, 0);
-        move_cloud2.setDuration(5000);
+        TranslateAnimation move_cloud2 = new TranslateAnimation(0, 0-width*3, 0, 0);
+        move_cloud2.setDuration(7000);
         move_cloud2.setRepeatCount(0);
         move_cloud2.setRepeatMode(1);
         cloud2.startAnimation(move_cloud2);
@@ -389,14 +427,14 @@ public class Activity2 extends AppCompatActivity {
         cloud3.setImageResource(R.drawable.cloud3);
         Random random1y = new Random();
         Random random1x = new Random();
-        int random11x = width + random1x.nextInt(width);
+        int random11x = width + random1x.nextInt(width/2);
         int random11y = random1y.nextInt(100-10) + 10;
         FrameLayout.LayoutParams fl_cloud3 = new FrameLayout.LayoutParams(
-                200, 200);
+                244*3/2, 126*3/2);
         fl_cloud3.setMargins(random11x, random11y, 0, 0);
         cloud3.setLayoutParams(fl_cloud3);
-        TranslateAnimation move_cloud3 = new TranslateAnimation(0, 0-width*2 + 300, 0, 0);
-        move_cloud3.setDuration(5000);
+        TranslateAnimation move_cloud3 = new TranslateAnimation(0, 0-width*2 +500, 0, 0);
+        move_cloud3.setDuration(6000);
         move_cloud3.setRepeatCount(0);
         move_cloud3.setRepeatMode(1);
         cloud3.startAnimation(move_cloud3);
@@ -406,7 +444,7 @@ public class Activity2 extends AppCompatActivity {
          ship = new ImageView(this);
         ship.setImageResource(R.drawable.ship2);
         Random random1 = new Random();
-        int ramdom11 = height-290 + random1.nextInt(10);
+        int ramdom11 = height-250 + random1.nextInt(10);
         FrameLayout.LayoutParams fl_ship = new FrameLayout.LayoutParams(
                 200, 200);
         fl_ship.setMargins(0 - 200, ramdom11, 0, 0);
@@ -465,29 +503,7 @@ public class Activity2 extends AppCompatActivity {
 
    }
 
-//    public class DrawView extends View {
-//        Paint paint = new Paint();
-//
-//        public DrawView(Context context) {
-//            super(context);
-//        }
-//
-//        @Override
-//        public void onDraw(Canvas canvas) {
-//            paint.setColor(Color.argb(255,153,204,255));
-//            bird_rect = new Rect(Math.round(bird.getX()) ,Math.round(bird.getY()), Math.round(bird.getX()) + 200, Math.round(bird.getY())+200);
-//            jet_b_rect = new Rect(Math.round(jetB.getX()),Math.round(jetB.getY()), Math.round(jetB.getX()) + 200, Math.round(jetB.getY())+200);
-//            jet_y_rect = new Rect(Math.round(jetY.getX()),Math.round(jetY.getY()), Math.round(jetY.getX()) + 200, Math.round(jetY.getY())+200);
-//
-//    canvas.drawRect(0, 0, width, height, paint);
-//    paint.setColor(Color.RED);
-//    canvas.drawRect(bird_rect, paint);
-//    canvas.drawRect(jet_b_rect, paint);
-//    canvas.drawRect(jet_y_rect, paint);
-//
-//        }
-//
-//    }
+
 
 
 
