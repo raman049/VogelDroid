@@ -44,7 +44,6 @@ public class Activity2 extends AppCompatActivity {
     }
 
     int canvas_width, canvas_height;
-    Bitmap bird_bit;
 
     public class DrawView extends View {
         String high_score_sting;
@@ -52,9 +51,13 @@ public class Activity2 extends AppCompatActivity {
 
         public DrawView(Context context) {
             super(context);
+
+           // bird_bit = BitmapFactory.decodeResource(getResources(), R.drawable.bird1);
+            jetPurp = new ArrayList<>();
+            cloud1_rect_arr = new ArrayList<>();
+            bird_rect = new Rect(550,800,650, 900);
             bird_bit = BitmapFactory.decodeResource(getResources(), R.drawable.bird1);
-            jetPurp = new ArrayList<Rect>();
-            addjetArrayPurp(true);
+            bird_bit = Bitmap.createScaledBitmap(bird_bit, 150, 100, true);
         }
 
         @Override
@@ -65,9 +68,14 @@ public class Activity2 extends AppCompatActivity {
             Paint tap2start = new Paint();
             tap2start.setStyle(Paint.Style.FILL);
             tap2start.setColor(Color.argb(255, 153, 204, 255));  //background color
+            Paint rectPaint = new Paint();
+            rectPaint.setColor(Color.RED);
+            rectPaint.setStyle(Paint.Style.STROKE);
+            rectPaint.setStrokeWidth(3);
             canvas.drawRect(0, 0, getWidth(), getHeight(), tap2start);//background
+            canvas.drawBitmap(bird_bit, bird_rect.left-10, bird_rect.top-10, null);
+            canvas.drawRect(bird_rect,rectPaint);
             addSun(canvas);
-            addBird(canvas);
             addWave(canvas);
             if (started != true) {
                 Typeface face = Typeface.createFromAsset(getAssets(), "fonts/comici.ttf");
@@ -94,11 +102,18 @@ public class Activity2 extends AppCompatActivity {
                 high_score.setTextSize(27);
                 String score = "Score: \n 0000000";
                 canvas.drawText(score, 10, 150, high_score);
-                bird_bit = Bitmap.createScaledBitmap(bird_bit, bird_bit.getWidth() / 2, bird_bit.getHeight() / 3, true);
+//                bird_bit = Bitmap.createScaledBitmap(bird_bit, bird_bit.getWidth() / 2, bird_bit.getHeight() / 3, true);
                 addjetArrayPurp(true);
+                addCloudArray(true);
                 for (Rect column : jetPurp) {
                     addJets(canvas, column);
                 }
+                for (Rect cloudC : cloud1_rect_arr){
+                    addCloud1(canvas,cloudC);
+                }
+                gravity();
+
+
             }
                 if (gameOver == true) {
                     canvas.drawText("GameOver", canvas_width / 2, canvas_height / 2, high_score);
@@ -137,25 +152,6 @@ public class Activity2 extends AppCompatActivity {
             sunCanvas.drawBitmap(sun_bit, canvas_width - 200, 100, null);
         }
 
-        int birdx, birdy;
-
-
-        public void addBird(Canvas birdCanvas) {
-            bird_bit = BitmapFactory.decodeResource(getResources(), R.drawable.bird1);
-            birdx = canvas_width / 3;
-            birdy = canvas_height / 2;
-            bird_bit = Bitmap.createScaledBitmap(bird_bit, bird_bit.getWidth() / 3, bird_bit.getHeight() / 3, true);
-            birdCanvas.drawBitmap(bird_bit, birdx, birdy, null);
-//            b = new Rect(birdx, birdy, birdx + 150, birdy + 75);
-//            Paint bee = new Paint();
-//            bee.setColor(Color.RED);
-//            bee.setStyle(Paint.Style.STROKE);
-//            bee.setStrokeWidth(1);
-//            birdCanvas.drawRect(b, bee);
-//            return b;
-        }
-
-
         public void addWave(Canvas waveCanvas) {
             Bitmap wave_bit;
             wave_bit = BitmapFactory.decodeResource(getResources(), R.drawable.wave2);
@@ -167,18 +163,18 @@ public class Activity2 extends AppCompatActivity {
         }
 
 
-        Bitmap plane1_bit;
-        ArrayList<Rect> jetPurp;
+        Bitmap plane1_bit,cloud_bit, bird_bit;
+        ArrayList<Rect> jetPurp,cloud1_rect_arr;
         int rectL, rectR,rectT;
+        Rect bird_rect;
         public void addjetArrayPurp(boolean s) {
             if (s == true) {
                 // position of jets
                 Random randomX1 = new Random();
-                Random randomY1 = new Random();
                 int randomXX= 10 + randomX1.nextInt(canvas_width+ 10);
                 int randomYY = 10+randomX1.nextInt(canvas_height + 10);
-                rectL = canvas_width + 100 + canvas_width* jetPurp.size() + randomXX;
-                rectR = canvas_width + canvas_width* jetPurp.size()+100 + 200 +randomXX;
+                rectL = 100 + canvas_width* jetPurp.size() + randomXX;
+                rectR =   100 +canvas_width* jetPurp.size() + 200 +randomXX;
                 rectT= 10+randomYY;
                 jetPurp.add(new Rect( rectL, rectT,rectR , rectT + 200));
             }
@@ -199,10 +195,70 @@ public class Activity2 extends AppCompatActivity {
             public void run() {
                 for(int i = 0; i< jetPurp.size(); i++){
                     Rect column2 = jetPurp.get(i);
-                    column2.left -= 5;
-                    column2.right -= 5;
+                    column2.left -= 10;
+                    column2.right -= 10;
                     try {
-                        Thread.sleep(50);
+                        Thread.sleep(1);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
+        public void addCloudArray(boolean s) {
+            if (s == true) {
+                // position of cloud
+                Random randomX1 = new Random();
+                int randomXX= 10 + randomX1.nextInt(canvas_width+ 10);
+                int randomYY = 10+randomX1.nextInt(200 +9);
+                rectL = canvas_width + 100 + canvas_width* cloud1_rect_arr.size() + randomXX;
+                rectR = canvas_width + canvas_width* cloud1_rect_arr.size()+100 + 200 +randomXX;
+                rectT= 10+randomYY;
+                cloud1_rect_arr.add(new Rect( rectL, rectT,rectR , rectT + 200));
+            }
+        }
+        public void addCloud1( Canvas jetCanvas, Rect cloud1Rect) {
+            Paint rectPaint = new Paint();
+            rectPaint.setColor(Color.RED);
+            rectPaint.setStyle(Paint.Style.STROKE);
+            rectPaint.setStrokeWidth(3);
+            jetCanvas.drawRect(cloud1Rect, rectPaint);
+            cloud_bit = BitmapFactory.decodeResource(getResources(), R.drawable.cloud1);
+            cloud_bit = Bitmap.createScaledBitmap(cloud_bit, 350, 200, true);
+            jetCanvas.drawBitmap(cloud_bit, cloud1Rect.left-10, cloud1Rect.top-10, null);
+            new Thread( new TaskAddCloud()).start();
+        }
+        class TaskAddCloud implements Runnable{
+            @Override
+            public void run() {
+                for(int i = 0; i< cloud1_rect_arr.size(); i++){
+                    Rect cRect1 = cloud1_rect_arr.get(i);
+                    cRect1.left -= 5;
+                    cRect1.right -= 5;
+                    try {
+                        Thread.sleep(10);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        public void gravity() {
+            if (started == true) {
+
+
+                new Thread(new TaskGravity()).start();
+            }
+        }
+        class TaskGravity implements Runnable{
+            @Override
+            public void run() {
+                for(int i = 0; i< 1000; i++){
+                    bird_rect.top += 2;
+                    bird_rect.bottom += 2;
+                    try {
+                        Thread.sleep(30);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -211,12 +267,6 @@ public class Activity2 extends AppCompatActivity {
         }
 
 
-        public void gravity(){
-            if(started == true) {
-                birdy = birdy +20;
-        }
-
-        }
 //        public void checkCollision(Canvas canvas) {
 //            Rect ab = addJets(canvas);
 //            Rect bb = addBird(canvas);
@@ -226,7 +276,12 @@ public class Activity2 extends AppCompatActivity {
 //
 //        }
 
+public void fly(){
 
+        bird_rect.top -= 80;
+        bird_rect.bottom -=80;
+
+}
 
 
 
@@ -234,9 +289,7 @@ public class Activity2 extends AppCompatActivity {
 
         @Override
         public boolean onTouchEvent(MotionEvent event) {
-            // fly=true;
-
-           // gravity();
+            fly();
             if (started != true) {
                 started = true;
             }
