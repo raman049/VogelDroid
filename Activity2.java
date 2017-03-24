@@ -27,6 +27,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 //import android.*;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.StringTokenizer;
 
@@ -36,25 +37,19 @@ import java.util.StringTokenizer;
 
 public class Activity2 extends AppCompatActivity {
 
-
-    //    FrameLayout frameLayout2;
-//    TextView tap, high_score,your_score;
-//    ImageView bird;
-//    int bird_x, bird_y, height, width, y_motion, score;
-    boolean gameOver, started,addStuff;
-//    FrameLayout.LayoutParams flp_bird;
-//    Thread thread, gravity_thread, collision_thread;
-//    Handler handler, handler2,collision_handler;
-//    Rect bird_rect,jet_y_rect, jet_b_rect;
+    boolean gameOver, started, addStuff;
     Paint high_score;
     DrawView drawView;
-    Rect a,b;
+    Rect a, b;
+    Handler handlerJet1 = new Handler();
+    Handler handler2;
+    Thread thread;
+    Boolean start;
     protected void onCreate(Bundle savedInstanceState) {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getSupportActionBar().hide();
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        // frameLayout2.setBackgroundColor(Color.argb(255, 153, 204, 255));
         drawView = new DrawView(this);
         setContentView(drawView);
         super.onCreate(savedInstanceState);
@@ -63,28 +58,27 @@ public class Activity2 extends AppCompatActivity {
 
     int canvas_width, canvas_height;
     Bitmap bird_bit;
+
     public class DrawView extends View {
-        Paint paint = new Paint();
         String high_score_sting;
+
 
         public DrawView(Context context) {
             super(context);
             bird_bit = BitmapFactory.decodeResource(getResources(), R.drawable.bird1);
-
+            jet = new ArrayList<Rect>();
+            addjetArray(true);
         }
 
         @Override
-        public void onDraw(Canvas canvas) {
+        public void onDraw(final Canvas canvas) {
             super.onDraw(canvas);
             canvas_width = getWidth();
             canvas_height = getHeight();
-            // canvas.drawColor(Color.BLUE);
-            canvas.drawBitmap(bird_bit, 900, 900, null);
-            // started = true;
-                Paint tap2start = new Paint();
-                 tap2start.setStyle(Paint.Style.FILL);
-                tap2start.setColor(Color.argb(255, 153, 204, 255));  //background color
-                canvas.drawRect(0, 0, getWidth(), getHeight(), tap2start);//background
+            Paint tap2start = new Paint();
+            tap2start.setStyle(Paint.Style.FILL);
+            tap2start.setColor(Color.argb(255, 153, 204, 255));  //background color
+            canvas.drawRect(0, 0, getWidth(), getHeight(), tap2start);//background
             addSun(canvas);
             addBird(canvas);
             addWave(canvas);
@@ -105,114 +99,176 @@ public class Activity2 extends AppCompatActivity {
                 canvas.drawText(high_score_sting, canvas_width / 2 - 200, canvas_height / 6, high_score);
 
             }
-            if (started == true && gameOver != true){
+            if (started == true && gameOver != true) {
                 high_score.setTextSize(25);
                 high_score.setColor(Color.BLUE);
                 high_score_sting = "High Score: \n 00000000";
                 canvas.drawText(high_score_sting, 10, 100, high_score);
                 high_score.setTextSize(27);
                 String score = "Score: \n 0000000";
-                canvas.drawText(score,10, 150,high_score);
-                addJets(canvas);
+                canvas.drawText(score, 10, 150, high_score);
+              //  addJets(canvas);
+                bird_bit = Bitmap.createScaledBitmap(bird_bit, bird_bit.getWidth() / 2, bird_bit.getHeight() / 3, true);
             }
-            if (gameOver == true){
-                addJets(canvas);
-                canvas.drawText("GameOver",40, 150,high_score);
+                if (gameOver == true) {
+                    canvas.drawText("GameOver", canvas_width / 2, canvas_height / 2, high_score);
+                }
+
+                 addjetArray(true);
+
+            for (Rect column : jet) {
+                addJets(canvas, column);
             }
-//            Rect aa = new Rect(plane1x,plane1y,plane1x+350,plane1y+200);
-//            Rect bb = new Rect(birdx,birdy,birdx+350,birdy+200);
-//            canvas.drawRect(aa,tap2start);
-//            canvas.drawRect(bb,tap2start);
-            checkCollision(canvas);
+
+
+
             invalidate();
         }
 
-    }
-Boolean fly;
-    public void addSun(Canvas sunCanvas) {
-        Bitmap sun_bit;
-        sun_bit = BitmapFactory.decodeResource(getResources(), R.drawable.sun);
-        sun_bit = Bitmap.createScaledBitmap(sun_bit, 100, 100, true);
-        //RotateDrawable rotate_sun = new RotateDrawable();
-        sunCanvas.rotate(360);
-
-        sunCanvas.drawBitmap(sun_bit, canvas_width - 200, 100, null);
-
-    }
-
-    int birdx,birdy;
-    public Rect addBird(Canvas birdCanvas) {
-        bird_bit = BitmapFactory.decodeResource(getResources(), R.drawable.bird1);
-        birdx=canvas_width / 3;
-        birdy= canvas_height / 2;
-        bird_bit = Bitmap.createScaledBitmap(bird_bit, bird_bit.getWidth() / 3, bird_bit.getHeight() / 3, true);
-        birdCanvas.drawBitmap(bird_bit,birdx ,birdy, null);
-        b = new Rect(birdx,birdy,birdx+150,birdy+75);
-        Paint bee = new Paint();
-        bee.setColor(Color.RED);
-        bee.setStyle(Paint.Style.STROKE);
-        bee.setStrokeWidth(1);
-        birdCanvas.drawRect(b,bee);
-        return b;
-    }
-
-
-    public void addWave(Canvas waveCanvas) {
-        Bitmap wave_bit;
-        wave_bit = BitmapFactory.decodeResource(getResources(), R.drawable.wave2);
-        wave_bit = Bitmap.createScaledBitmap(wave_bit, 400, 200, true);
-        for (int i = 0; i < 7; i++) {
-
-            waveCanvas.drawBitmap(wave_bit, 0 + (400 * i) - 5 * i, canvas_height - 170, null);
+        class MyThread extends Thread {
+        @Override
+        public void run() {
+            for(int i =0; i<100;i++){
+                Message message = Message.obtain();
+                message.arg1 = i;
+                handlerJet1.sendMessage(message);
+               try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+               }
+//                if (i == 98){
+//                    i =2;
+//                }
+            }
         }
     }
-    int jetmove;
-    Bitmap plane1_bit;
-    int plane1x, plane1y;
-    public Rect addJets(Canvas jetCanvas){
 
-        plane1_bit = BitmapFactory.decodeResource(getResources(), R.drawable.plane1);
-        plane1_bit = Bitmap.createScaledBitmap(plane1_bit, 350, 200, true);
-        jetmove = jetmove + 15;
-        plane1x=canvas_width - jetmove;
-        plane1y=canvas_height/2;
-        jetCanvas.drawBitmap(plane1_bit,plane1x, plane1y, null);
-        Paint rectPaint = new Paint();
-        rectPaint.setColor(Color.BLACK);
-        rectPaint.setStrokeWidth(3);
-        a = new Rect(plane1x,plane1y,plane1x+350,plane1y+200);
-        Paint jee = new Paint();
-        jee.setColor(Color.RED);
-        jee.setStyle(Paint.Style.STROKE);
-        jee.setStrokeWidth(1);
-        jetCanvas.drawRect(a,jee);
-        return  a;
-
-    }
-
-
-    public void checkCollision(Canvas canvas) {
-            Rect ab = addJets(canvas);
-            Rect bb = addBird(canvas);
-        if (ab.intersect(bb)){
-            gameOver = true;
+        public void addSun(Canvas sunCanvas) {
+            Bitmap sun_bit;
+            sun_bit = BitmapFactory.decodeResource(getResources(), R.drawable.sun);
+            sun_bit = Bitmap.createScaledBitmap(sun_bit, 100, 100, true);
+            //RotateDrawable rotate_sun = new RotateDrawable();
+            sunCanvas.rotate(360);
+            sunCanvas.drawBitmap(sun_bit, canvas_width - 200, 100, null);
         }
 
-    }
+        int birdx, birdy;
+
+
+        public Rect addBird(Canvas birdCanvas) {
+            bird_bit = BitmapFactory.decodeResource(getResources(), R.drawable.bird1);
+            birdx = canvas_width / 3;
+            birdy = canvas_height / 2;
+            bird_bit = Bitmap.createScaledBitmap(bird_bit, bird_bit.getWidth() / 3, bird_bit.getHeight() / 3, true);
+            birdCanvas.drawBitmap(bird_bit, birdx, birdy, null);
+            b = new Rect(birdx, birdy, birdx + 150, birdy + 75);
+            Paint bee = new Paint();
+            bee.setColor(Color.RED);
+            bee.setStyle(Paint.Style.STROKE);
+            bee.setStrokeWidth(1);
+            birdCanvas.drawRect(b, bee);
+            return b;
+        }
+
+
+        public void addWave(Canvas waveCanvas) {
+            Bitmap wave_bit;
+            wave_bit = BitmapFactory.decodeResource(getResources(), R.drawable.wave2);
+            wave_bit = Bitmap.createScaledBitmap(wave_bit, 400, 200, true);
+            for (int i = 0; i < 7; i++) {
+
+                waveCanvas.drawBitmap(wave_bit, 0 + (400 * i) - 5 * i, canvas_height - 170, null);
+            }
+        }
+
+        int jetmove;
+        Bitmap plane1_bit;
+        int plane1x, plane1y;
+        ArrayList<Rect> jet;
+
+        public void addjetArray(boolean started) {
+            int width = 75;
+            int height = 30;
+            if (started == true) {
+                // position of jets
+                jet.add(new Rect(canvas_width + 100 + width + jet.size() * 300, 100 + 250,width, height));
+            } else {
+                jet.add(new Rect(jet.get(jet.size() - 1).left + 600, 250, width, height));
+            }
+        }
+
+
+        public void addJets( Canvas jetCanvas, Rect jetRect) {
+
+            // jetRect = new Rect(plane1x, plane1y, plane1x + 350, plane1y + 200);
+            Paint rectPaint = new Paint();
+            rectPaint.setColor(Color.RED);
+            rectPaint.setStyle(Paint.Style.STROKE);
+            rectPaint.setStrokeWidth(1);
+            jetCanvas.drawRect(jetRect, rectPaint);
+
+            plane1_bit = BitmapFactory.decodeResource(getResources(), R.drawable.plane1);
+            plane1_bit = Bitmap.createScaledBitmap(plane1_bit, 350, 200, true);
+
+            jetCanvas.drawBitmap(plane1_bit, jetRect.left, jetRect.top, null);
+            new Thread( new Task()).start();
+        }
+
+
+        public void gravity(){
+            if(started == true) {
+                birdy = birdy +20;
+        }
+
+        }
+//        public void checkCollision(Canvas canvas) {
+//            Rect ab = addJets(canvas);
+//            Rect bb = addBird(canvas);
+//            if (ab.intersect(bb)) {
+//                gameOver = true;
+//            }
+//
+//        }
+
+
+        class Task implements Runnable{
+
+            @Override
+            public void run() {
+                for(int i =0; i<jet.size(); i++){
+                   // final int value = 1;
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    Rect column2 = jet.get(i);
+                    column2.left -= 9;
+                }
+            }
+        }
+
 
 
         @Override
-    public boolean onTouchEvent(MotionEvent event) {
-           // fly=true;
+        public boolean onTouchEvent(MotionEvent event) {
+            // fly=true;
 
-
-        if (started != true){
-            started = true;
-           // checkCollision();
+           // gravity();
+            if (started != true) {
+                started = true;
+            }
+            if (started == true){
+                for (int i = 0; i < jet.size(); i++) {
+                   // Rect column = jet.get(i);
+                   // column.left -= 100;
+                }
+            }
+            return super.onTouchEvent(event);
         }
-        return super.onTouchEvent(event);
-    }
 
+    }
 }
 
 
