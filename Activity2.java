@@ -1,7 +1,6 @@
 package com.vogelplay.vogel3;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,26 +9,17 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.graphics.drawable.AnimationDrawable;
-import android.graphics.drawable.RotateDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.RotateAnimation;
-import android.view.animation.TranslateAnimation;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.TextView;
 //import android.*;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.StringTokenizer;
 
 /**
  * Created by maharjan on 3/9/17.
@@ -37,14 +27,11 @@ import java.util.StringTokenizer;
 
 public class Activity2 extends AppCompatActivity {
 
-    boolean gameOver, started, addStuff;
+    boolean gameOver, started;
     Paint high_score;
     DrawView drawView;
-    Rect a, b;
     Handler handlerJet1 = new Handler();
-    Handler handler2;
-    Thread thread;
-    Boolean start;
+
     protected void onCreate(Bundle savedInstanceState) {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -66,8 +53,8 @@ public class Activity2 extends AppCompatActivity {
         public DrawView(Context context) {
             super(context);
             bird_bit = BitmapFactory.decodeResource(getResources(), R.drawable.bird1);
-            jet = new ArrayList<Rect>();
-            addjetArray(true);
+            jetPurp = new ArrayList<Rect>();
+            addjetArrayPurp(true);
         }
 
         @Override
@@ -107,18 +94,15 @@ public class Activity2 extends AppCompatActivity {
                 high_score.setTextSize(27);
                 String score = "Score: \n 0000000";
                 canvas.drawText(score, 10, 150, high_score);
-              //  addJets(canvas);
                 bird_bit = Bitmap.createScaledBitmap(bird_bit, bird_bit.getWidth() / 2, bird_bit.getHeight() / 3, true);
+                addjetArrayPurp(true);
+                for (Rect column : jetPurp) {
+                    addJets(canvas, column);
+                }
             }
                 if (gameOver == true) {
                     canvas.drawText("GameOver", canvas_width / 2, canvas_height / 2, high_score);
                 }
-
-                 addjetArray(true);
-
-            for (Rect column : jet) {
-                addJets(canvas, column);
-            }
 
 
 
@@ -156,19 +140,19 @@ public class Activity2 extends AppCompatActivity {
         int birdx, birdy;
 
 
-        public Rect addBird(Canvas birdCanvas) {
+        public void addBird(Canvas birdCanvas) {
             bird_bit = BitmapFactory.decodeResource(getResources(), R.drawable.bird1);
             birdx = canvas_width / 3;
             birdy = canvas_height / 2;
             bird_bit = Bitmap.createScaledBitmap(bird_bit, bird_bit.getWidth() / 3, bird_bit.getHeight() / 3, true);
             birdCanvas.drawBitmap(bird_bit, birdx, birdy, null);
-            b = new Rect(birdx, birdy, birdx + 150, birdy + 75);
-            Paint bee = new Paint();
-            bee.setColor(Color.RED);
-            bee.setStyle(Paint.Style.STROKE);
-            bee.setStrokeWidth(1);
-            birdCanvas.drawRect(b, bee);
-            return b;
+//            b = new Rect(birdx, birdy, birdx + 150, birdy + 75);
+//            Paint bee = new Paint();
+//            bee.setColor(Color.RED);
+//            bee.setStyle(Paint.Style.STROKE);
+//            bee.setStrokeWidth(1);
+//            birdCanvas.drawRect(b, bee);
+//            return b;
         }
 
 
@@ -182,37 +166,48 @@ public class Activity2 extends AppCompatActivity {
             }
         }
 
-        int jetmove;
-        Bitmap plane1_bit;
-        int plane1x, plane1y;
-        ArrayList<Rect> jet;
 
-        public void addjetArray(boolean started) {
-            int width = 75;
-            int height = 30;
-            if (started == true) {
+        Bitmap plane1_bit;
+        ArrayList<Rect> jetPurp;
+        int rectL, rectR,rectT;
+        public void addjetArrayPurp(boolean s) {
+            if (s == true) {
                 // position of jets
-                jet.add(new Rect(canvas_width + 100 + width + jet.size() * 300, 100 + 250,width, height));
-            } else {
-                jet.add(new Rect(jet.get(jet.size() - 1).left + 600, 250, width, height));
+                Random randomX1 = new Random();
+                Random randomY1 = new Random();
+                int randomXX= 10 + randomX1.nextInt(canvas_width+ 10);
+                int randomYY = 10+randomX1.nextInt(canvas_height + 10);
+                rectL = canvas_width + 100 + canvas_width* jetPurp.size() + randomXX;
+                rectR = canvas_width + canvas_width* jetPurp.size()+100 + 200 +randomXX;
+                rectT= 10+randomYY;
+                jetPurp.add(new Rect( rectL, rectT,rectR , rectT + 200));
             }
         }
-
-
         public void addJets( Canvas jetCanvas, Rect jetRect) {
-
-            // jetRect = new Rect(plane1x, plane1y, plane1x + 350, plane1y + 200);
             Paint rectPaint = new Paint();
             rectPaint.setColor(Color.RED);
             rectPaint.setStyle(Paint.Style.STROKE);
-            rectPaint.setStrokeWidth(1);
+            rectPaint.setStrokeWidth(3);
             jetCanvas.drawRect(jetRect, rectPaint);
-
             plane1_bit = BitmapFactory.decodeResource(getResources(), R.drawable.plane1);
             plane1_bit = Bitmap.createScaledBitmap(plane1_bit, 350, 200, true);
-
-            jetCanvas.drawBitmap(plane1_bit, jetRect.left, jetRect.top, null);
+            jetCanvas.drawBitmap(plane1_bit, jetRect.left-10, jetRect.top-10, null);
             new Thread( new Task()).start();
+        }
+        class Task implements Runnable{
+            @Override
+            public void run() {
+                for(int i = 0; i< jetPurp.size(); i++){
+                    Rect column2 = jetPurp.get(i);
+                    column2.left -= 5;
+                    column2.right -= 5;
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
         }
 
 
@@ -232,22 +227,8 @@ public class Activity2 extends AppCompatActivity {
 //        }
 
 
-        class Task implements Runnable{
 
-            @Override
-            public void run() {
-                for(int i =0; i<jet.size(); i++){
-                   // final int value = 1;
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    Rect column2 = jet.get(i);
-                    column2.left -= 9;
-                }
-            }
-        }
+
 
 
 
@@ -258,12 +239,6 @@ public class Activity2 extends AppCompatActivity {
            // gravity();
             if (started != true) {
                 started = true;
-            }
-            if (started == true){
-                for (int i = 0; i < jet.size(); i++) {
-                   // Rect column = jet.get(i);
-                   // column.left -= 100;
-                }
             }
             return super.onTouchEvent(event);
         }
