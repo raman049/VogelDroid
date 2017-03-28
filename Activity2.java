@@ -13,10 +13,15 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.TranslateAnimation;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.TextView;
 //import android.*;
 import java.util.Random;
 
@@ -29,7 +34,7 @@ public class Activity2 extends AppCompatActivity {
     boolean gameOver, started;
     Paint high_score;
     DrawView drawView;
-
+    FrameLayout frameLayout;
     protected void onCreate(Bundle savedInstanceState) {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -38,11 +43,33 @@ public class Activity2 extends AppCompatActivity {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         drawView = new DrawView(this);
         setContentView(drawView);
-
-
-
+        frameLayout = new FrameLayout(this);
+        frameLayout.setBackgroundColor(Color.argb(255,153,204,255));
+        setContentView(frameLayout);
 
         super.onCreate(savedInstanceState);
+       int width = this.getResources().getDisplayMetrics().widthPixels;
+       int height = this.getResources().getDisplayMetrics().heightPixels;
+        FrameLayout.LayoutParams flpTtoS = new FrameLayout.LayoutParams(
+                1000,200);
+        flpTtoS.setMargins(width/2 - 550,height/2 -200,0,0);
+        // Creating a new TextView
+       TextView tap = new TextView(this);
+        tap.setText("Tap To Start");
+        tap.setTypeface(Typeface.create("Comic Sans MS", Typeface.NORMAL));
+        tap.setGravity(Gravity.CENTER);
+        tap.setTextColor(Color.YELLOW);
+        tap.setTextSize(50);
+        tap.setBackgroundColor(Color.GRAY);
+        tap.setLayoutParams(flpTtoS);
+        frameLayout.addView(tap);
+        drawView = new DrawView(this);
+        frameLayout.addView(drawView);
+            addJetY();
+
+
+
+       // super.onCreate(savedInstanceState);
 
     }
 
@@ -74,6 +101,8 @@ public class Activity2 extends AppCompatActivity {
             bird_rect = new Rect(550,800,650, 900);
             bird_bit = BitmapFactory.decodeResource(getResources(), R.drawable.bird1);
             bird_bit = Bitmap.createScaledBitmap(bird_bit, 150, 100, true);
+
+
         }
 
         @Override
@@ -88,18 +117,18 @@ public class Activity2 extends AppCompatActivity {
             rectPaint.setColor(Color.RED);
             rectPaint.setStyle(Paint.Style.STROKE);
             rectPaint.setStrokeWidth(3);
-            canvas.drawRect(0, 0, getWidth(), getHeight(), tap2start);//background
+            //canvas.drawRect(0, 0, getWidth(), getHeight(), tap2start);//background
             canvas.drawBitmap(bird_bit, bird_rect.left+10, bird_rect.top+10, null);
             canvas.drawRect(bird_rect,rectPaint);
             addSun(canvas);
             addWave(canvas);
-            wave0(canvas);
-            wave1(canvas);
-            wave2(canvas);
-            wave3(canvas);
-            wave4(canvas);
-            wave5(canvas);
-            wave6(canvas);
+//            wave0(canvas);
+//            wave1(canvas);
+//            wave2(canvas);
+//            wave3(canvas);
+//            wave4(canvas);
+//            wave5(canvas);
+//            wave6(canvas);
 
             if (started != true) {
                 Typeface face = Typeface.createFromAsset(getAssets(), "fonts/comici.ttf");
@@ -126,7 +155,7 @@ public class Activity2 extends AppCompatActivity {
                 String score = "Score: \n 0000000";
                 canvas.drawText(score, 10, 150, high_score);
                 gravity();
-                jet1(canvas);
+               // jet1(canvas);
                 cloud(canvas);
                 ship(canvas);
                 checkCollision();
@@ -384,4 +413,29 @@ public void fly(){
         }
 
     }
+    ImageView jetY;
+    public void addJetY(){
+        jetY = new ImageView(this);
+        jetY.setImageResource(R.drawable.plane2);
+        Random randomX1 = new Random();
+        int randomXX= 800 + randomX1.nextInt(1000);
+        int randomYY = 50+randomX1.nextInt(1000);
+        int rectL = 100 + 1000 + randomXX;
+       int rectT= 10+randomYY;
+
+
+        FrameLayout.LayoutParams fl_jet = new FrameLayout.LayoutParams(
+                350, 200);
+        fl_jet.setMargins(rectL, rectT, rectL +200, rectT+200);///////hhjhj
+        jetY.setLayoutParams(fl_jet);
+        TranslateAnimation move_jetY = new TranslateAnimation(0, -2000,0, 0);
+        move_jetY.setDuration(4000);
+        move_jetY.setRepeatCount(5);
+        move_jetY.setRepeatMode(1);
+        jetY.setBackgroundColor(Color.BLACK);
+        jetY.startAnimation(move_jetY);
+        frameLayout.addView(jetY);
+
+    }
+
 }
