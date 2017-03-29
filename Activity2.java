@@ -13,10 +13,17 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
+import android.view.animation.TranslateAnimation;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.TextView;
 //import android.*;
 import java.util.Random;
 
@@ -27,22 +34,36 @@ import java.util.Random;
 public class Activity2 extends AppCompatActivity {
 
     boolean gameOver, started;
-    Paint high_score;
+    //Paint high_score;
     DrawView drawView;
-
+    FrameLayout frameLayout, frameLayout2;
+    int width, height;
+    Typeface face;
     protected void onCreate(Bundle savedInstanceState) {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-
         getSupportActionBar().hide();
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         drawView = new DrawView(this);
         setContentView(drawView);
-
-
-
-
+        frameLayout = new FrameLayout(this);
+        frameLayout.setBackgroundColor(Color.argb(255,153,204,255));
+        setContentView(frameLayout);
         super.onCreate(savedInstanceState);
+        width = this.getResources().getDisplayMetrics().widthPixels;
+        height = this.getResources().getDisplayMetrics().heightPixels;
+        face = Typeface.createFromAsset(getAssets(), "fonts/comici.ttf");
+        drawView = new DrawView(this);
+        frameLayout.addView(drawView);
+        frameLayout2 = new FrameLayout(this);
+        frameLayout.addView(frameLayout2);
+        addTextT2S();
+        addTextHighScore();
+        addJetY();
+        addWave();
+        addSun();
+
+       // super.onCreate(savedInstanceState);
 
     }
 
@@ -62,18 +83,12 @@ public class Activity2 extends AppCompatActivity {
             rectPaint.setStrokeWidth(3);
             rectJet_p = addRectJet1();
             rectJet_y = addRectJet2();
+           // jetRecta = addRectJet1a();
             rectCloud = addRectCloud();
-            rectShip = addRectShip();
-            wave2Rect0 = addRectWave1();
-            wave2Rect1 = addRectWave1();
-            wave2Rect2 = addRectWave2();
-            wave2Rect3 = addRectWave3();
-            wave2Rect4 = addRectWave4();
-            wave2Rect5 = addRectWave5();
-            wave2Rect6 = addRectWave6();
             bird_rect = new Rect(550,800,650, 900);
             bird_bit = BitmapFactory.decodeResource(getResources(), R.drawable.bird1);
             bird_bit = Bitmap.createScaledBitmap(bird_bit, 150, 100, true);
+
         }
 
         @Override
@@ -81,177 +96,40 @@ public class Activity2 extends AppCompatActivity {
             super.onDraw(canvas);
             canvas_width = getWidth();
             canvas_height = getHeight();
-            Paint tap2start = new Paint();
-            tap2start.setStyle(Paint.Style.FILL);
-            tap2start.setColor(Color.argb(255, 153, 204, 255));  //background color
             Paint rectPaint = new Paint();
             rectPaint.setColor(Color.RED);
             rectPaint.setStyle(Paint.Style.STROKE);
             rectPaint.setStrokeWidth(3);
-            canvas.drawRect(0, 0, getWidth(), getHeight(), tap2start);//background
             canvas.drawBitmap(bird_bit, bird_rect.left+10, bird_rect.top+10, null);
             canvas.drawRect(bird_rect,rectPaint);
-            addSun(canvas);
-            addWave(canvas);
-            wave0(canvas);
-            wave1(canvas);
-            wave2(canvas);
-            wave3(canvas);
-            wave4(canvas);
-            wave5(canvas);
-            wave6(canvas);
 
-            if (started != true) {
-                Typeface face = Typeface.createFromAsset(getAssets(), "fonts/comici.ttf");
-                tap2start.setColor(Color.YELLOW);
-                tap2start.setTypeface(face);
-                tap2start.setTextSize(100);
-                tap2start.setStrokeWidth(1);
-                tap2start.setTextAlign(Paint.Align.CENTER);
-                canvas.drawText("Tap to Start", canvas_width / 2 - 100, canvas_height / 2, tap2start);
+          //  if (started != true) {
                 //HIGH SCORE
-                high_score = new Paint();
-                high_score.setColor(Color.RED);
-                high_score.setTextSize(50);
-                high_score.setTypeface(face);
-                high_score_sting = "High Score: \n 00000000";
-                canvas.drawText(high_score_sting, canvas_width / 2 - 200, canvas_height / 6, high_score);
-            }
+//                Paint high_score = new Paint();
+//                high_score.setColor(Color.RED);
+//                high_score.setTextSize(50);
+//                high_score.setTypeface(face);
+//                high_score_sting = "High Score: \n 00000000";
+//                canvas.drawText(high_score_sting, canvas_width / 2 - 200, canvas_height / 6, high_score);
+ //           }
             if (started == true && gameOver != true) {
-                high_score.setTextSize(25);
-                high_score.setColor(Color.BLUE);
-                high_score_sting = "High Score: \n 00000000";
-                canvas.drawText(high_score_sting, 10, 100, high_score);
-                high_score.setTextSize(27);
-                String score = "Score: \n 0000000";
-                canvas.drawText(score, 10, 150, high_score);
+//                high_score.setTextSize(25);
+//                high_score.setColor(Color.BLUE);
+//                high_score_sting = "High Score: \n 00000000";
+//                canvas.drawText(high_score_sting, 10, 100, high_score);
+//                high_score.setTextSize(27);
+//                String score = "Score: \n 0000000";
+//                canvas.drawText(score, 10, 150, high_score);
                 gravity();
-                jet1(canvas);
+               jet1(canvas);
                 cloud(canvas);
-                ship(canvas);
                 checkCollision();
 
             }
                 if (gameOver == true) {
-                    canvas.drawText("GameOver", canvas_width / 2, canvas_height / 2, high_score);
+                    canvas.drawText("GameOver", canvas_width / 2, canvas_height / 2, null);
                 }
             invalidate();
-        }
-
-
-        public void addSun(Canvas sunCanvas) {
-            Bitmap sun_bit;
-            sun_bit = BitmapFactory.decodeResource(getResources(), R.drawable.sun);
-            sun_bit = Bitmap.createScaledBitmap(sun_bit, 100, 100, true);
-            //RotateDrawable rotate_sun = new RotateDrawable();
-            sunCanvas.rotate(360);
-            sunCanvas.drawBitmap(sun_bit, canvas_width - 200, 100, null);
-        }
-        int x1, y1;
-        public void addWave(Canvas waveCanvas) {
-            Bitmap wave_bit;
-            wave_bit = BitmapFactory.decodeResource(getResources(), R.drawable.wave2);
-            wave_bit = Bitmap.createScaledBitmap(wave_bit, 400, 200, true);
-            for (int i = 0; i < 7; i++) {
-                x1=(400 * i) - 5 * i;
-                y1= yy- 150;
-                waveCanvas.drawBitmap(wave_bit,x1 , y1, null);
-            }
-        }
-        public Rect addRectWave0() {
-            rectL = 5-400;
-            rectT=  yy - 150;
-            Rect rectWave =new Rect( rectL, rectT,rectL + 400 , rectT + 200);
-            return rectWave;
-        }
-        public Rect addRectWave1() {
-            rectL = (400 * 0) - 5 * 0;
-            rectT=  yy - 150;
-            Rect rectWave =new Rect( rectL, rectT,rectL + 400 , rectT + 200);
-            return rectWave;
-        }
-        public Rect addRectWave2() {
-            rectL = (400 * 1) - 5 * 1;
-            rectT=  yy - 150;
-            Rect rectWave =new Rect( rectL, rectT,rectL + 400 , rectT + 200);
-            return rectWave;
-        }
-        public Rect addRectWave3() {
-            rectL = (400 * 2) - 5 * 2;
-            rectT=  yy - 150;
-            Rect rectWave =new Rect( rectL, rectT,rectL + 400 , rectT + 200);
-            return rectWave;
-        }
-        public Rect addRectWave4() {
-            rectL = (400 * 3) - 5 * 3;
-            rectT=  yy - 150;
-            Rect rectWave =new Rect( rectL, rectT,rectL + 400 , rectT + 200);
-            return rectWave;
-        }
-        public Rect addRectWave5() {
-            rectL = (400 * 4) - 5 * 4;
-            rectT=  yy - 150;
-            Rect rectWave =new Rect( rectL, rectT,rectL + 400 , rectT + 200);
-            return rectWave;
-        }
-        public Rect addRectWave6() {
-            rectL = (400 * 5) - 5 * 5;
-            rectT=  yy - 150;
-            Rect rectWave =new Rect( rectL, rectT,rectL + 400 , rectT + 200);
-            return rectWave;
-        }
-        public void addWave2(Canvas canvas, Rect Rect){
-            Rect.left += 25;
-            Rect.right += 25;
-            canvas.drawRect(wave2Rect1, rectPaint);
-            wave2_bit = BitmapFactory.decodeResource(getResources(), R.drawable.wave2);
-            wave2_bit = Bitmap.createScaledBitmap(wave2_bit, 400, 200, true);
-            canvas.drawBitmap(wave2_bit, Rect.left-10, Rect.top-10, null);
-        }
-
-
-        Rect wave2Rect0,wave2Rect1,wave2Rect2,wave2Rect3,wave2Rect4,wave2Rect5,wave2Rect6;
-        public void wave0(final Canvas canvas){
-            addWave2(canvas, wave2Rect0);
-            if(wave2Rect0.left > 0){
-                wave2Rect0 = addRectWave0();
-            }
-        }
-        public void wave1(final Canvas canvas){
-            addWave2(canvas, wave2Rect1);
-            if(wave2Rect1.left > 400-5){
-                wave2Rect1 = addRectWave1();
-            }
-        }
-        public void wave2(final Canvas canvas){
-            addWave2(canvas, wave2Rect2);
-            if(wave2Rect2.left > 400*2-5*2){
-                wave2Rect2 = addRectWave2();
-            }
-        }
-        public void wave3(final Canvas canvas){
-            addWave2(canvas, wave2Rect3);
-            if(wave2Rect3.left > 400*3-5*3){
-                wave2Rect3 = addRectWave3();
-            }
-        }
-        public void wave4(final Canvas canvas){
-            addWave2(canvas, wave2Rect4);
-            if(wave2Rect4.left > 400*4-5*4){
-                wave2Rect4 = addRectWave4();
-            }
-        }
-        public void wave5(final Canvas canvas){
-            addWave2(canvas, wave2Rect5);
-            if(wave2Rect5.left > 400*5-5*5){
-                wave2Rect5 = addRectWave5();
-            }
-        }
-        public void wave6(final Canvas canvas){
-            addWave2(canvas, wave2Rect6);
-            if(wave2Rect6.left > 400*6-5*6){
-                wave2Rect6 = addRectWave6();
-            }
         }
 
         Bitmap plane1_bit,plane2_bit,cloud_bit,ship_bit, bird_bit,wave2_bit;
@@ -269,8 +147,8 @@ public class Activity2 extends AppCompatActivity {
             return jetPurp;
         }
         public void addJet1(Canvas jetCanvas, Rect jetRect) {
-            jetRect.left -= 25;
-            jetRect.right -= 25;
+            jetRect.left -= 10;
+            jetRect.right -= 10;
             jetCanvas.drawRect(jetRect, rectPaint);
             plane1_bit = BitmapFactory.decodeResource(getResources(), R.drawable.plane1);
             plane1_bit = Bitmap.createScaledBitmap(plane1_bit, 350, 200, true);
@@ -296,8 +174,8 @@ public class Activity2 extends AppCompatActivity {
             return jetPurp;
         }
         public void addJet2(Canvas jetCanvas, Rect jetRect) {
-            jetRect.left -= 35;
-            jetRect.right -= 35;
+            jetRect.left -= 15;
+            jetRect.right -= 15;
             jetCanvas.drawRect(jetRect, rectPaint);
             plane2_bit = BitmapFactory.decodeResource(getResources(), R.drawable.plane2);
             plane2_bit = Bitmap.createScaledBitmap(plane2_bit, 350, 200, true);
@@ -326,30 +204,6 @@ public class Activity2 extends AppCompatActivity {
                 rectCloud = addRectCloud();
             }
         }
-        public Rect addRectShip() {
-            Random randomX1 = new Random();
-            int randomXX=   randomX1.nextInt(100);
-            int randomYY = 1200+ randomX1.nextInt(10);
-            rectL = 10 - randomXX;
-            rectT= randomYY;
-            Rect shipRect =new Rect( rectL, rectT,rectL + 200 , rectT + 200);
-            return shipRect;
-        }
-        public void addShip(Canvas jetCanvas, Rect rect) {
-            rect.left += 12;
-            rect.right += 12;
-            jetCanvas.drawRect(rect, rectPaint);
-            ship_bit = BitmapFactory.decodeResource(getResources(), R.drawable.ship2);
-            ship_bit = Bitmap.createScaledBitmap(ship_bit, 550, 300, true);
-            jetCanvas.drawBitmap(ship_bit, rect.left-10, rect.top-10, null);
-        }
-        public void ship(final Canvas canvas){
-            addShip(canvas, rectShip);
-            if (rectShip.right > 2000){
-                rectShip = addRectShip();
-            }
-
-        }
         public void gravity() {
             if (started == true) {
                 bird_rect.top += 20;
@@ -375,6 +229,9 @@ public void fly(){
             fly();
             if (started != true) {
                 started = true;
+               frameLayout.removeView(tap);
+                addShipImage();
+                addTextScore();
             }
 
             return super.onTouchEvent(event);
@@ -384,4 +241,176 @@ public void fly(){
         }
 
     }
+    ImageView jetY;
+    public void addJetY(){
+        jetY = new ImageView(this);
+        jetY.setImageResource(R.drawable.plane2);
+        Random randomX1 = new Random();
+        int randomXX= 800 + randomX1.nextInt(1000);
+        int randomYY = 50+randomX1.nextInt(1000);
+        int rectL = 100 + 1000 + randomXX;
+        int rectT= 10+randomYY;
+
+        FrameLayout.LayoutParams fl_jet = new FrameLayout.LayoutParams(
+                350, 200);
+        fl_jet.setMargins(rectL, rectT, rectL +200, rectT+200);///////hhjhj
+
+        TranslateAnimation move_jetY = new TranslateAnimation(0, -2000,0, 0);
+        move_jetY.setDuration(8000);
+        move_jetY.setRepeatCount(0);
+        move_jetY.setRepeatMode(1);
+        move_jetY.reset();
+        jetY.setBackgroundColor(Color.BLACK);
+        jetY.setLayoutParams(fl_jet);
+        jetY.startAnimation(move_jetY);
+        frameLayout.addView(jetY);
+
+    }
+    public Rect addRectJet1a() {
+        // position of jets
+        Random randomX1 = new Random();
+        int randomXX= 1000 + randomX1.nextInt(1000);
+        int randomYY = 50+randomX1.nextInt(1000);
+        int rectL = 100 + 1000 + randomXX;
+       int rectT= 10+randomYY;
+        Rect jetPurp =new Rect( rectL, rectT,rectL + 200 , rectT + 200);
+        return jetPurp;
+    }
+    public void addJet1a() {
+        jetRecta = addRectJet1a();
+        FrameLayout.LayoutParams fl_jet = new FrameLayout.LayoutParams(
+                350, 200);
+        fl_jet.setMargins(jetRecta.left, jetRecta.top, jetRecta.left + 200, jetRecta.top + 200);///////hhjhj
+        jetRecta.left -= 10;
+        jetRecta.right -= 10;
+        jetY = new ImageView(this);
+        jetY.setImageResource(R.drawable.plane2);
+        jetY.setLayoutParams(fl_jet);
+        TranslateAnimation move_jetY = new TranslateAnimation(0, -5000, 0, 0);
+        move_jetY.setDuration(4000);
+        move_jetY.setRepeatCount(1);
+        move_jetY.setRepeatMode(1);
+       // jetY.setBackgroundColor(Color.BLACK);
+        jetY.startAnimation(move_jetY);
+        frameLayout.addView(jetY);
+
+    }
+    Rect jetRecta;
+    public void jet1a() {
+            addJet1a();
+    }
+    TextView tap,high_score,score;
+public void addTextT2S(){
+    tap = new TextView(this);
+    tap.setTypeface(face);
+    tap.setText("Tap To Start");
+    tap.setGravity(Gravity.CENTER);
+    tap.setTextColor(Color.YELLOW);
+    tap.setTextSize(75);
+    FrameLayout.LayoutParams flpTtoS = new FrameLayout.LayoutParams(
+            1000,200);
+    flpTtoS.setMargins(width/2 - 550,height/2 -200,0,0);
+    tap.setLayoutParams(flpTtoS);
+    frameLayout.addView(tap);
+}
+    public void addTextHighScore(){
+        high_score = new TextView(this);
+        high_score.setTypeface(face);
+        high_score.setGravity(Gravity.CENTER);
+        high_score.setTextColor(Color.RED);
+        high_score.setTextSize(25);
+        String high_score_sting = "High Score: \n 00000000";
+        high_score.setText(high_score_sting);
+        FrameLayout.LayoutParams flpTtoS = new FrameLayout.LayoutParams(
+                1000,200);
+        flpTtoS.setMargins(width/2 - 200,height/6,0,0);
+        high_score.setLayoutParams(flpTtoS);
+        frameLayout.addView(high_score);
+    }
+    public void addTextScore(){
+        score = new TextView(this);
+        score.setTypeface(face);
+        score.setGravity(Gravity.CENTER);
+        score.setTextColor(Color.BLUE);
+        score.setTextSize(14);
+        String score_sting = "Score: \n 00000000";
+        score.setText(score_sting);
+        FrameLayout.LayoutParams flpTtoS = new FrameLayout.LayoutParams(
+                1000,200);
+        flpTtoS.setMargins(10,150,0,0);
+        score.setLayoutParams(flpTtoS);
+        frameLayout.addView(score);
+    }
+    public void addWave() {
+        //Wave
+        for (int i =0 ; i<7; i++){
+            ImageView waveStatic = new ImageView(this);
+            waveStatic.setImageResource(R.drawable.wave2);
+            FrameLayout.LayoutParams flpwaveStatic = new FrameLayout.LayoutParams(
+                    400, 200);
+            flpwaveStatic.setMargins(0 + (400*i) -5, height - 170, 0, 0);
+            waveStatic.setLayoutParams(flpwaveStatic);
+            frameLayout2.addView(waveStatic);
+
+            ImageView wave = new ImageView(this);
+            wave.setImageResource(R.drawable.wave2);
+            FrameLayout.LayoutParams flpWave = new FrameLayout.LayoutParams(
+                    400, 200);
+            flpWave.setMargins((390*i)-400, height - 170, 0, 0);
+            wave.setLayoutParams(flpWave);
+            TranslateAnimation move_wave = new TranslateAnimation(0, 600, 0, 0);
+            move_wave.setInterpolator(new LinearInterpolator());
+            move_wave.setDuration(1000);
+            move_wave.setRepeatCount(-1);
+            wave.startAnimation(move_wave);
+            frameLayout.addView(wave);
+            ImageView wave2 = new ImageView(this);
+            wave2.setImageResource(R.drawable.wave2);
+            FrameLayout.LayoutParams flpWave2 = new FrameLayout.LayoutParams(
+                    400, 200);
+            flpWave2.setMargins((400*i)-605, height - 170, 0, 0);
+            wave2.setLayoutParams(flpWave2);
+            TranslateAnimation move_wave2 = new TranslateAnimation(0, 600, 0, 0);
+            move_wave2.setInterpolator(new LinearInterpolator());
+            move_wave2.setDuration(800);
+            move_wave2.setRepeatCount(-1);
+            wave2.startAnimation(move_wave2);
+            frameLayout.addView(wave2);
+        }
+
+    }
+    ImageView ship;
+    public void addShipImage(){
+        ship = new ImageView(this);
+        ship.setImageResource(R.drawable.ship2);
+        Random random1 = new Random();
+        int ramdom11 = height-450 + random1.nextInt(10);
+        FrameLayout.LayoutParams fl_ship = new FrameLayout.LayoutParams(
+                550, 400);
+        fl_ship.setMargins(0 - 300, ramdom11, 0, 0);
+        ship.setLayoutParams(fl_ship);
+        TranslateAnimation move_ship = new TranslateAnimation(0, width+600, 0, 0);
+        move_ship.setInterpolator(new LinearInterpolator());
+        move_ship.setDuration(9000);
+        move_ship.setRepeatCount(-1);
+        move_ship.reset();
+        ship.startAnimation(move_ship);
+
+        frameLayout2.addView(ship);
+    }
+    public void addSun(){
+        FrameLayout.LayoutParams flpSun = new FrameLayout.LayoutParams(
+                150,150);
+        flpSun.setMargins(width - 300 , 100,0,0);
+        ImageView sunImage = new ImageView(this);
+        sunImage.setImageResource(R.drawable.sun);
+        sunImage.setLayoutParams(flpSun);
+        frameLayout.addView(sunImage);
+        RotateAnimation rotate_sun = new RotateAnimation(0.0f, -360f, 75,75);
+        rotate_sun.setDuration(10000);
+        rotate_sun.setRepeatCount(-1);
+        rotate_sun.setInterpolator(new LinearInterpolator());
+        sunImage.startAnimation(rotate_sun);
+    }
+
 }
