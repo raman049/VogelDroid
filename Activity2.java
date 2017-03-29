@@ -35,6 +35,7 @@ public class Activity2 extends AppCompatActivity {
     Paint high_score;
     DrawView drawView;
     FrameLayout frameLayout;
+    int width, height;
     protected void onCreate(Bundle savedInstanceState) {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -48,8 +49,8 @@ public class Activity2 extends AppCompatActivity {
         setContentView(frameLayout);
 
         super.onCreate(savedInstanceState);
-       int width = this.getResources().getDisplayMetrics().widthPixels;
-       int height = this.getResources().getDisplayMetrics().heightPixels;
+        width = this.getResources().getDisplayMetrics().widthPixels;
+        height = this.getResources().getDisplayMetrics().heightPixels;
         FrameLayout.LayoutParams flpTtoS = new FrameLayout.LayoutParams(
                 1000,200);
         flpTtoS.setMargins(width/2 - 550,height/2 -200,0,0);
@@ -65,7 +66,8 @@ public class Activity2 extends AppCompatActivity {
         frameLayout.addView(tap);
         drawView = new DrawView(this);
         frameLayout.addView(drawView);
-            addJetY();
+        //addJetY();
+        addWave();
 
 
 
@@ -89,19 +91,12 @@ public class Activity2 extends AppCompatActivity {
             rectPaint.setStrokeWidth(3);
             rectJet_p = addRectJet1();
             rectJet_y = addRectJet2();
+            jetRecta = addRectJet1a();
             rectCloud = addRectCloud();
             rectShip = addRectShip();
-            wave2Rect0 = addRectWave1();
-            wave2Rect1 = addRectWave1();
-            wave2Rect2 = addRectWave2();
-            wave2Rect3 = addRectWave3();
-            wave2Rect4 = addRectWave4();
-            wave2Rect5 = addRectWave5();
-            wave2Rect6 = addRectWave6();
             bird_rect = new Rect(550,800,650, 900);
             bird_bit = BitmapFactory.decodeResource(getResources(), R.drawable.bird1);
             bird_bit = Bitmap.createScaledBitmap(bird_bit, 150, 100, true);
-
 
         }
 
@@ -121,14 +116,6 @@ public class Activity2 extends AppCompatActivity {
             canvas.drawBitmap(bird_bit, bird_rect.left+10, bird_rect.top+10, null);
             canvas.drawRect(bird_rect,rectPaint);
             addSun(canvas);
-            addWave(canvas);
-//            wave0(canvas);
-//            wave1(canvas);
-//            wave2(canvas);
-//            wave3(canvas);
-//            wave4(canvas);
-//            wave5(canvas);
-//            wave6(canvas);
 
             if (started != true) {
                 Typeface face = Typeface.createFromAsset(getAssets(), "fonts/comici.ttf");
@@ -177,111 +164,6 @@ public class Activity2 extends AppCompatActivity {
             sunCanvas.drawBitmap(sun_bit, canvas_width - 200, 100, null);
         }
         int x1, y1;
-        public void addWave(Canvas waveCanvas) {
-            Bitmap wave_bit;
-            wave_bit = BitmapFactory.decodeResource(getResources(), R.drawable.wave2);
-            wave_bit = Bitmap.createScaledBitmap(wave_bit, 400, 200, true);
-            for (int i = 0; i < 7; i++) {
-                x1=(400 * i) - 5 * i;
-                y1= yy- 150;
-                waveCanvas.drawBitmap(wave_bit,x1 , y1, null);
-            }
-        }
-        public Rect addRectWave0() {
-            rectL = 5-400;
-            rectT=  yy - 150;
-            Rect rectWave =new Rect( rectL, rectT,rectL + 400 , rectT + 200);
-            return rectWave;
-        }
-        public Rect addRectWave1() {
-            rectL = (400 * 0) - 5 * 0;
-            rectT=  yy - 150;
-            Rect rectWave =new Rect( rectL, rectT,rectL + 400 , rectT + 200);
-            return rectWave;
-        }
-        public Rect addRectWave2() {
-            rectL = (400 * 1) - 5 * 1;
-            rectT=  yy - 150;
-            Rect rectWave =new Rect( rectL, rectT,rectL + 400 , rectT + 200);
-            return rectWave;
-        }
-        public Rect addRectWave3() {
-            rectL = (400 * 2) - 5 * 2;
-            rectT=  yy - 150;
-            Rect rectWave =new Rect( rectL, rectT,rectL + 400 , rectT + 200);
-            return rectWave;
-        }
-        public Rect addRectWave4() {
-            rectL = (400 * 3) - 5 * 3;
-            rectT=  yy - 150;
-            Rect rectWave =new Rect( rectL, rectT,rectL + 400 , rectT + 200);
-            return rectWave;
-        }
-        public Rect addRectWave5() {
-            rectL = (400 * 4) - 5 * 4;
-            rectT=  yy - 150;
-            Rect rectWave =new Rect( rectL, rectT,rectL + 400 , rectT + 200);
-            return rectWave;
-        }
-        public Rect addRectWave6() {
-            rectL = (400 * 5) - 5 * 5;
-            rectT=  yy - 150;
-            Rect rectWave =new Rect( rectL, rectT,rectL + 400 , rectT + 200);
-            return rectWave;
-        }
-        public void addWave2(Canvas canvas, Rect Rect){
-            Rect.left += 25;
-            Rect.right += 25;
-            canvas.drawRect(wave2Rect1, rectPaint);
-            wave2_bit = BitmapFactory.decodeResource(getResources(), R.drawable.wave2);
-            wave2_bit = Bitmap.createScaledBitmap(wave2_bit, 400, 200, true);
-            canvas.drawBitmap(wave2_bit, Rect.left-10, Rect.top-10, null);
-        }
-
-
-        Rect wave2Rect0,wave2Rect1,wave2Rect2,wave2Rect3,wave2Rect4,wave2Rect5,wave2Rect6;
-        public void wave0(final Canvas canvas){
-            addWave2(canvas, wave2Rect0);
-            if(wave2Rect0.left > 0){
-                wave2Rect0 = addRectWave0();
-            }
-        }
-        public void wave1(final Canvas canvas){
-            addWave2(canvas, wave2Rect1);
-            if(wave2Rect1.left > 400-5){
-                wave2Rect1 = addRectWave1();
-            }
-        }
-        public void wave2(final Canvas canvas){
-            addWave2(canvas, wave2Rect2);
-            if(wave2Rect2.left > 400*2-5*2){
-                wave2Rect2 = addRectWave2();
-            }
-        }
-        public void wave3(final Canvas canvas){
-            addWave2(canvas, wave2Rect3);
-            if(wave2Rect3.left > 400*3-5*3){
-                wave2Rect3 = addRectWave3();
-            }
-        }
-        public void wave4(final Canvas canvas){
-            addWave2(canvas, wave2Rect4);
-            if(wave2Rect4.left > 400*4-5*4){
-                wave2Rect4 = addRectWave4();
-            }
-        }
-        public void wave5(final Canvas canvas){
-            addWave2(canvas, wave2Rect5);
-            if(wave2Rect5.left > 400*5-5*5){
-                wave2Rect5 = addRectWave5();
-            }
-        }
-        public void wave6(final Canvas canvas){
-            addWave2(canvas, wave2Rect6);
-            if(wave2Rect6.left > 400*6-5*6){
-                wave2Rect6 = addRectWave6();
-            }
-        }
 
         Bitmap plane1_bit,plane2_bit,cloud_bit,ship_bit, bird_bit,wave2_bit;
         int rectL,rectT;
@@ -404,6 +286,7 @@ public void fly(){
             fly();
             if (started != true) {
                 started = true;
+                jet1a();
             }
 
             return super.onTouchEvent(event);
@@ -421,7 +304,7 @@ public void fly(){
         int randomXX= 800 + randomX1.nextInt(1000);
         int randomYY = 50+randomX1.nextInt(1000);
         int rectL = 100 + 1000 + randomXX;
-       int rectT= 10+randomYY;
+        int rectT= 10+randomYY;
 
 
         FrameLayout.LayoutParams fl_jet = new FrameLayout.LayoutParams(
@@ -435,6 +318,77 @@ public void fly(){
         jetY.setBackgroundColor(Color.BLACK);
         jetY.startAnimation(move_jetY);
         frameLayout.addView(jetY);
+
+    }
+    public Rect addRectJet1a() {
+        // position of jets
+        Random randomX1 = new Random();
+        int randomXX= 1000 + randomX1.nextInt(1000);
+        int randomYY = 50+randomX1.nextInt(1000);
+        int rectL = 100 + 1000 + randomXX;
+       int rectT= 10+randomYY;
+        Rect jetPurp =new Rect( rectL, rectT,rectL + 200 , rectT + 200);
+        return jetPurp;
+    }
+    public void addJet1a() {
+        jetRecta = addRectJet1a();
+        FrameLayout.LayoutParams fl_jet = new FrameLayout.LayoutParams(
+                350, 200);
+        fl_jet.setMargins(jetRecta.left, jetRecta.top, jetRecta.left + 200, jetRecta.top + 200);///////hhjhj
+        jetRecta.left -= 25;
+        jetRecta.right -= 25;
+        jetY = new ImageView(this);
+        jetY.setImageResource(R.drawable.plane2);
+        jetY.setLayoutParams(fl_jet);
+        TranslateAnimation move_jetY = new TranslateAnimation(0, -5000, 0, 0);
+        move_jetY.setDuration(4000);
+        move_jetY.setRepeatCount(1);
+        move_jetY.setRepeatMode(1);
+        jetY.setBackgroundColor(Color.BLACK);
+        jetY.startAnimation(move_jetY);
+        frameLayout.addView(jetY);
+
+    }
+    Rect jetRecta;
+    public void jet1a() {
+            addJet1a();
+    }
+
+    public void addWave() {
+        //Wave
+        for (int i =0 ; i<7; i++){
+            ImageView waveStatic = new ImageView(this);
+            waveStatic.setImageResource(R.drawable.wave2);
+            FrameLayout.LayoutParams flpwaveStatic = new FrameLayout.LayoutParams(
+                    400, 200);
+            flpwaveStatic.setMargins(0 + (400*i) -5, height - 170, 0, 0);
+            waveStatic.setLayoutParams(flpwaveStatic);
+            frameLayout.addView(waveStatic);
+
+            ImageView wave = new ImageView(this);
+            wave.setImageResource(R.drawable.wave2);
+            FrameLayout.LayoutParams flpWave = new FrameLayout.LayoutParams(
+                    400, 200);
+            flpWave.setMargins((390*i)-400, height - 170, 0, 0);
+            wave.setLayoutParams(flpWave);
+            TranslateAnimation move_wave = new TranslateAnimation(0, 600, 0, 0);
+            move_wave.setDuration(1000);
+            move_wave.setRepeatCount(-1);
+            wave.startAnimation(move_wave);
+            frameLayout.addView(wave);
+
+            ImageView wave2 = new ImageView(this);
+            wave2.setImageResource(R.drawable.wave2);
+            FrameLayout.LayoutParams flpWave2 = new FrameLayout.LayoutParams(
+                    400, 200);
+            flpWave2.setMargins((400*i)-605, height - 170, 0, 0);
+            wave2.setLayoutParams(flpWave2);
+            TranslateAnimation move_wave2 = new TranslateAnimation(0, 600, 0, 0);
+            move_wave2.setDuration(800);
+            move_wave2.setRepeatCount(-1);
+            wave2.startAnimation(move_wave2);
+            frameLayout.addView(wave2);
+        }
 
     }
 
