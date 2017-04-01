@@ -172,8 +172,8 @@ public class Activity2 extends AppCompatActivity {
     tap.setTextColor(Color.YELLOW);
     tap.setTextSize(75);
     FrameLayout.LayoutParams flpTtoS = new FrameLayout.LayoutParams(
-            1000,200);
-    flpTtoS.setMargins(width/2 - 550,height/2 -200,0,0);
+            width/2,height/8);
+    flpTtoS.setMargins(width/4,height/2 -200,0,0);
     tap.setLayoutParams(flpTtoS);
     frameLayout.addView(tap);
 }
@@ -186,16 +186,16 @@ public class Activity2 extends AppCompatActivity {
         String high_score_sting = "High Score: \n 00000000";
         high_score.setText(high_score_sting);
         FrameLayout.LayoutParams flpTtoS = new FrameLayout.LayoutParams(
-                1000,200);
-        flpTtoS.setMargins(width/2 - 500,height/6,0,0);
-        //high_score.setBackgroundColor(Color.DKGRAY);
+                width/2,height/5);
+        flpTtoS.setMargins(width/4,height/6,0,0);
+       // high_score.setBackgroundColor(Color.DKGRAY);
         high_score.setLayoutParams(flpTtoS);
 
         if(started == true){
             high_score.setTextColor(Color.BLUE);
             high_score.setTextSize(15);
             high_score.setGravity(Gravity.LEFT);
-            flpTtoS.setMargins(10,100,0,0);
+            flpTtoS.setMargins(width/40,height/40,0,0);
             high_score.setLayoutParams(flpTtoS);
         }
         frameLayout.addView(high_score);
@@ -209,8 +209,8 @@ public class Activity2 extends AppCompatActivity {
         String score_sting = "Score: \n 00000000";
         score.setText(score_sting);
         FrameLayout.LayoutParams flpTtoS = new FrameLayout.LayoutParams(
-                1000,200);
-        flpTtoS.setMargins(10,200,0,0);
+                width/3,height/18);
+        flpTtoS.setMargins(width/40,height/14,0,0);
         score.setLayoutParams(flpTtoS);
         frameLayout.addView(score);
     }
@@ -265,7 +265,7 @@ public class Activity2 extends AppCompatActivity {
         int randomYY = height-300 + randomX1.nextInt(10);
         int rectL = 1-500 - randomXX;
         int rectT= randomYY;
-        Rect shipPurp =new Rect( rectL, rectT,rectL + 150 , rectT + 70);
+        Rect shipPurp =new Rect( rectL, rectT,rectL + width/6 , rectT + height/10);
         return shipPurp;
     }
     public void addShip(Rect rect) {
@@ -319,11 +319,11 @@ public class Activity2 extends AppCompatActivity {
     }
     public Rect jetRect() {
         Random randomX1 = new Random();
-        int randomXX= 200+randomX1.nextInt(1000);
+        int randomXX= randomX1.nextInt(1000);
         int randomYY = randomX1.nextInt(1000);
-        int rectL = 1500 + randomXX;
-        int rectT= 200+randomYY;
-        Rect jetPurp =new Rect( rectL, rectT,rectL + 150 , rectT + 70);
+        int rectL = width + randomXX;
+        int rectT= height/20+randomYY;
+        Rect jetPurp =new Rect( rectL, rectT,rectL + width/11 , rectT + width/28);
         return jetPurp;
     }
     public void addJetYellow(Rect rect) {
@@ -331,8 +331,8 @@ public class Activity2 extends AppCompatActivity {
         rect.right -= 10;
         frameLayout2.removeView(jetY);
         fl_jetY = new FrameLayout.LayoutParams(
-                350, 200);
-        fl_jetY.setMargins(rect.left-75, rect.top-50, rect.left + 200, rect.top + 200);
+                width/6, width/9);
+        fl_jetY.setMargins(rect.left-75, rect.top+100, rect.left + 200, rect.top + 200);
         jetY = new ImageView(this);
         jetY.setImageResource(R.drawable.plane2);
         jetY.setLayoutParams(fl_jetY);
@@ -343,8 +343,8 @@ public class Activity2 extends AppCompatActivity {
         rect.right -= 10;
         frameLayout2.removeView(jetP);
         fl_jetP = new FrameLayout.LayoutParams(
-                350, 200);
-        fl_jetP.setMargins(rect.left-75, rect.top-50, rect.left + 200, rect.top + 200);
+                width/6, width/9);
+        fl_jetP.setMargins(rect.left-75, rect.top+100, rect.left + 200, rect.top + 200);
         jetP = new ImageView(this);
         jetP.setImageResource(R.drawable.plane1);
         jetP.setLayoutParams(fl_jetP);
@@ -354,7 +354,7 @@ public class Activity2 extends AppCompatActivity {
         //JET YELLOW MOTION
         rectJetYellow.left -= 10;
         rectJetYellow.right -=10;
-        fl_jetY.setMargins(rectJetYellow.left-75, rectJetYellow.top-50, rectJetYellow.left + 200, rectJetYellow.top + 200);
+        fl_jetY.setMargins(rectJetYellow.left-75, rectJetYellow.top-75, rectJetYellow.left + 200, rectJetYellow.top + 200);
         jetY.setLayoutParams(fl_jetY);
         if (rectJetYellow.right < 0) {
             rectJetYellow = jetRect();
@@ -362,7 +362,7 @@ public class Activity2 extends AppCompatActivity {
         //JET PURPLE MOTION
         rectJetPurple.left -= 15;
         rectJetPurple.right -=15;
-        fl_jetP.setMargins(rectJetPurple.left-75, rectJetPurple.top-50, rectJetPurple.left + 200, rectJetPurple.top + 200);
+        fl_jetP.setMargins(rectJetPurple.left-75, rectJetPurple.top-75, rectJetPurple.left + 200, rectJetPurple.top + 200);
         jetP.setLayoutParams(fl_jetP);
         if (rectJetPurple.right < 0) {
             rectJetPurple = jetRect();
@@ -370,28 +370,29 @@ public class Activity2 extends AppCompatActivity {
     }
     public Rect cloudRect() {
         Random randomX1 = new Random();
-        int randomXX= 200+randomX1.nextInt(1000);
-        int randomYY = 50+randomX1.nextInt(200);
-        int rectL = 1500 + randomXX;
+        int randomXX= randomX1.nextInt(200);
+        int randomYY = 5+randomX1.nextInt(200);
+        int rectL = width + randomXX;
         int rectT= randomYY;
-        Rect cloudrect =new Rect( rectL, rectT,rectL + 150 , rectT + 70);
+        Rect cloudrect =new Rect( rectL, rectT,rectL + width/8 , rectT + width/23);
         return cloudrect;
     }
     public void addCloud1(Rect rect) {
         frameLayout2.removeView(cloud1);
         fl_cloud1 = new FrameLayout.LayoutParams(
-                width/5, width/7);
-        fl_cloud1.setMargins(rect.left-width/5, rect.top-width/7, rect.left + 200, rect.top + 200);
+                width/5, width/9);
+        fl_cloud1.setMargins(rect.left-width/25, rect.top-width/25, rect.left + 200, rect.top + 200);
         cloud1 = new ImageView(this);
         cloud1.setImageResource(R.drawable.cloud1);
         cloud1.setLayoutParams(fl_cloud1);
+        //cloud1.setBackgroundColor(Color.BLACK);
         frameLayout2.addView(cloud1);
     }
     public void addCloud2(Rect rect) {
         frameLayout2.removeView(cloud2);
         fl_cloud2 = new FrameLayout.LayoutParams(
                 width/5, width/7);
-        fl_cloud2.setMargins(rect.left-85, rect.top-75, rect.left + 200, rect.top + 200);
+        fl_cloud2.setMargins(rect.left-width/25, rect.top-width/25, rect.left + 200, rect.top + 200);
         cloud2 = new ImageView(this);
         cloud2.setImageResource(R.drawable.cloud2);
         cloud2.setLayoutParams(fl_cloud2);
@@ -401,7 +402,7 @@ public class Activity2 extends AppCompatActivity {
         frameLayout2.removeView(cloud3);
         fl_cloud3 = new FrameLayout.LayoutParams(
                 width/5, width/7);
-        fl_cloud3.setMargins(rect.left-85, rect.top-75, rect.left + 200, rect.top + 200);
+        fl_cloud3.setMargins(rect.left-width/25, rect.top-width/25, rect.left + 200, rect.top + 200);
         cloud3 = new ImageView(this);
         cloud3.setImageResource(R.drawable.cloud3);
         cloud3.setLayoutParams(fl_cloud3);
@@ -410,23 +411,23 @@ public class Activity2 extends AppCompatActivity {
     public void moveCloud() {
         rectCloud1.left -= 10;
         rectCloud1.right -= 10;
-        fl_cloud1.setMargins(rectCloud1.left - width/5, rectCloud1.top - width/7, rectCloud1.left + 200, rectCloud1.top + 200);
+        fl_cloud1.setMargins(rectCloud1.left-width/25, rectCloud1.top-width/25, rectCloud1.left + 200, rectCloud1.top + 200);
         cloud1.setLayoutParams(fl_cloud1);
-        if (rectCloud1.right < 0) {
+        if (rectCloud1.right < -100) {
             rectCloud1 = cloudRect();
         }
-        rectCloud2.left -= 10;
-        rectCloud2.right -= 10;
-        fl_cloud2.setMargins(rectCloud2.left - 85, rectCloud2.top - 75, rectCloud2.left + 200, rectCloud2.top + 200);
+        rectCloud2.left -= 9;
+        rectCloud2.right -= 9;
+        fl_cloud2.setMargins(rectCloud2.left-width/25, rectCloud2.top-width/20, rectCloud2.left + 200, rectCloud2.top + 200);
         cloud2.setLayoutParams(fl_cloud2);
-        if (rectCloud2.right < 0) {
+        if (rectCloud2.right < -100) {
             rectCloud2 = cloudRect();
         }
-        rectCloud3.left -= 10;
-        rectCloud3.right -= 10;
-        fl_cloud3.setMargins(rectCloud3.left - 85, rectCloud3.top - 75, rectCloud3.left + 200, rectCloud3.top + 200);
+        rectCloud3.left -= 8;
+        rectCloud3.right -= 8;
+        fl_cloud3.setMargins(rectCloud3.left-width/25, rectCloud3.top-width/22, rectCloud3.left + 200, rectCloud3.top + 200);
         cloud3.setLayoutParams(fl_cloud3);
-        if (rectCloud3.right < 0) {
+        if (rectCloud3.right < -100) {
             rectCloud3 = cloudRect();
         }
     }
