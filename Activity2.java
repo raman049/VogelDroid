@@ -1,6 +1,7 @@
 package com.vogelplay.vogel3;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -15,8 +16,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
+import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -60,15 +63,7 @@ public class Activity2 extends AppCompatActivity {
         addWave();
         addSun();
         addBird();
-        addJetYellow(rectJetYellow);
-        addJetPurple(rectJetPurple);
-        addCloud1(rectCloud1);
-        addCloud2(rectCloud2);
-        addCloud3(rectCloud3);
-        addShip(rectShip);
-        addTree(rectTree);
-        addFly(rectFly);
-        addP_tree(rectP_tree);
+
     }
     public class DrawView extends View {
         public DrawView(Context context) {
@@ -92,13 +87,10 @@ public class Activity2 extends AppCompatActivity {
                 moveCloud();
                 moveShip();
                 gravity();
-                checkCollision();
                 moveTree();
                 moveFly();
                 moveP_tree();
-            }
-            if (gameOver == true) {
-                canvas.drawText("GameOver", width / 2, height / 2, rectPaint);
+                checkCollision();
             }
             canvas.drawRect(bird_rect, rectPaint);
             canvas.drawRect(rectJetYellow,rectPaint);
@@ -110,6 +102,11 @@ public class Activity2 extends AppCompatActivity {
             canvas.drawRect(rectTree,rectPaint);
             canvas.drawRect(rectFly,rectPaint);
             canvas.drawRect(rectP_tree,rectPaint);
+            if (gameOver == true) {
+               canvas.drawText("GameOver", width / 2, height / 2, rectPaint);
+
+            }
+
             invalidate();
         }
         Boolean avoidGravity;
@@ -146,23 +143,29 @@ public class Activity2 extends AppCompatActivity {
             Rect rf = rectFly;
 
             if (br.intersect(rjy) || (br.intersect(rjp))) {
+                addBang();
                 gameOver = true;
             }
             if((br.intersect(rc1)||(br.intersect(rc2))||(br.intersect(rc3)))){
+                addThunder();
                 gameOver = true;
             }
             if(br.intersect(rf)){
                 gameOver = true;
             }
             if(br.intersect(rs)){
-                gameOver=true;
+                bird_rect.bottom -= height/20;
+                bird_rect.top -=height/20;
             }
-            if (bird_rect.bottom < 0) {
-                gameOver = true;
+            if (bird_rect.top < 0) {
+                bird_rect.bottom += height/20;
+                bird_rect.top +=height/20;
             }
             if (gameOver == true) {
                 frameLayout.removeView(high_score);
                 addTextHighScore();
+                Intent i = new Intent(Activity2.this,Activity3.class);
+                startActivity(i);
             }
         }
 
@@ -192,6 +195,24 @@ public class Activity2 extends AppCompatActivity {
                 addTextScore();
                 frameLayout.removeView(high_score);
                 addTextHighScore();
+                 rectJetYellow = jetRect();
+                 rectJetPurple = jetRect();
+                 rectCloud1 = cloudRect();
+                 rectCloud2 = cloudRect();
+                 rectCloud3 = cloudRect();
+                 rectShip = shipRect();
+                 rectTree = treeRect();
+                 rectFly = flyRect();
+                 rectP_tree = p_treeRect();
+                addJetYellow(rectJetYellow);
+                addJetPurple(rectJetPurple);
+                addCloud1(rectCloud1);
+                addCloud2(rectCloud2);
+                addCloud3(rectCloud3);
+                addShip(rectShip);
+                addTree(rectTree);
+                addFly(rectFly);
+                addP_tree(rectP_tree);
             }
 
             if ( event.getAction() == MotionEvent.ACTION_UP){
@@ -329,10 +350,6 @@ public class Activity2 extends AppCompatActivity {
         }
     }
     public void addSun(){
-        String w = Integer.toString(width);
-        String h = Integer.toString(height);
-        Log.d("width",w);
-        Log.d("height",h);
         FrameLayout.LayoutParams flpSun = new FrameLayout.LayoutParams(
                 width/13,width/13);
         flpSun.setMargins(width - width/8 , height/11,0,0);
@@ -345,6 +362,30 @@ public class Activity2 extends AppCompatActivity {
         rotate_sun.setRepeatCount(-1);
         rotate_sun.setInterpolator(new LinearInterpolator());
         sunImage.startAnimation(rotate_sun);
+    }
+    public void addBang(){
+        FrameLayout.LayoutParams flpBang = new FrameLayout.LayoutParams(
+                width/2,width/2);
+        flpBang.setMargins(bird_rect.left-width/4 , bird_rect.top-width/4,0,0);
+        ImageView bangImage = new ImageView(this);
+        bangImage.setImageResource(R.drawable.crash);
+        bangImage.setLayoutParams(flpBang);
+        frameLayout.addView(bangImage);
+        RotateAnimation rotate_bang = new RotateAnimation(0.0f, -260f, width/4,width/4,width/4,width/4);
+        rotate_bang.setDuration(100);
+        rotate_bang.setRepeatCount(0);
+        rotate_bang.setInterpolator(new LinearInterpolator());
+        bangImage.startAnimation(rotate_bang);
+
+    }
+    public void addThunder(){
+        FrameLayout.LayoutParams flpThunder = new FrameLayout.LayoutParams(
+                width/6,width/6);
+        flpThunder.setMargins(bird_rect.left -width/12 , bird_rect.top-width/12,0,0);
+        ImageView thunderImage = new ImageView(this);
+        thunderImage.setImageResource(R.drawable.lightning);
+        thunderImage.setLayoutParams(flpThunder);
+        frameLayout.addView(thunderImage);
     }
     public void addBird(){
         flpBird = new FrameLayout.LayoutParams(
