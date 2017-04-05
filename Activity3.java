@@ -27,8 +27,6 @@ public class Activity3 extends AppCompatActivity {
     ImageButton scoreboard;
     FrameLayout frameLayout3;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -69,8 +67,8 @@ public class Activity3 extends AppCompatActivity {
         presentScore.setLayoutParams(flpScore);
         frameLayout3.addView(presentScore);
  // REPLAY
-        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(150, 150);
-        lp.setMargins(width - 165, height-170, 0, 0);
+        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(width/10, height/6);
+        lp.setMargins(width*9/10 - 10, height*6/7 -30, 0, 0);
         ImageButton replayButton = new ImageButton(this);
         replayButton.setLayoutParams(lp);
         replayButton.setBackgroundResource(R.drawable.replay);
@@ -88,8 +86,8 @@ public class Activity3 extends AppCompatActivity {
 ///INSTRUCTION
         final ImageButton instruction = new ImageButton(this);
         popUpWindow = new PopupWindow(this);
-        FrameLayout.LayoutParams lpInst = new FrameLayout.LayoutParams(150, 150);
-        lpInst.setMargins(10, height - 170, 0, 0);
+        FrameLayout.LayoutParams lpInst = new FrameLayout.LayoutParams(width/10, height/6);
+        lpInst.setMargins(10, height*6/7 -30, 0, 0);
         instruction.setLayoutParams(lpInst);
         instruction.setBackgroundResource(R.drawable.instructionque);
         frameLayout3.addView(instruction);
@@ -112,7 +110,7 @@ public class Activity3 extends AppCompatActivity {
         popupFrame.addView(instView);
 
         ImageButton backButton = new ImageButton(this);
-        FrameLayout.LayoutParams lpbackButton = new FrameLayout.LayoutParams(150, 160);
+        FrameLayout.LayoutParams lpbackButton = new FrameLayout.LayoutParams(width/10, height/6);
         lpbackButton.setMargins(10, 10, 0, 0);
         backButton.setLayoutParams(lpbackButton);
         backButton.setBackgroundResource(R.drawable.close);
@@ -127,8 +125,8 @@ public class Activity3 extends AppCompatActivity {
         popupFrame.addView(backButton);
         popUpWindow.setContentView(popupFrame);
   //FB BUTTON
-        FrameLayout.LayoutParams lpFb = new FrameLayout.LayoutParams(150, 150);
-        lpFb.setMargins(10, height-330, 0, 0);
+        FrameLayout.LayoutParams lpFb = new FrameLayout.LayoutParams(width/10, height/6);
+        lpFb.setMargins(10,height*29/42 -40, 0, 0);
         ImageButton fbButton = new ImageButton(this);
         fbButton.setLayoutParams(lpFb);
         fbButton.setBackgroundResource(R.drawable.fblogo);
@@ -142,8 +140,8 @@ public class Activity3 extends AppCompatActivity {
         frameLayout3.addView(fbButton);
 //  SCOREBOARD BUTTON
         scoreboard = new ImageButton(this);
-        FrameLayout.LayoutParams lpscoreb = new FrameLayout.LayoutParams(150, 150);
-        lpscoreb.setMargins(170,height-170,0,0);
+        FrameLayout.LayoutParams lpscoreb = new FrameLayout.LayoutParams(width/10, height/6);
+        lpscoreb.setMargins(width/10 +20,height*6/7 -30,0,0);
         scoreboard.setLayoutParams(lpscoreb);
         scoreboard.setBackgroundResource(R.drawable.scoreboard);
         scoreboard.setOnClickListener(new View.OnClickListener() {
