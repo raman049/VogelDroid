@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.facebook.FacebookSdk;
 
 
 
@@ -25,6 +26,8 @@ public class Activity3 extends AppCompatActivity {
     PopupWindow popUpWindow;
     ImageButton scoreboard;
     FrameLayout frameLayout3;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +49,8 @@ public class Activity3 extends AppCompatActivity {
         flpHighScore.setMargins(width/3-500,height/10,0,0);
         TextView highScore = new TextView(this);
         highScore.setText("High Score: \n 000000000");
-        highScore.setTypeface(Typeface.create("sans-serif-thin", Typeface.NORMAL));
+        Typeface face=Typeface.createFromAsset(getAssets(),"fonts/comici.ttf");
+        highScore.setTypeface(face);
         highScore.setGravity(Gravity.CENTER);
         highScore.setTextColor(Color.YELLOW);
         highScore.setTextSize(20);
@@ -58,7 +62,7 @@ public class Activity3 extends AppCompatActivity {
         flpScore.setMargins(width-width/3-500,height/10,0,0);
         TextView presentScore = new TextView(this);
         presentScore.setText("Your Score: \n 000000000");
-        presentScore.setTypeface(Typeface.create("sans-serif-thin",Typeface.NORMAL));
+        presentScore.setTypeface(face);
         presentScore.setGravity(Gravity.CENTER);
         presentScore.setTextColor(Color.YELLOW);
         presentScore.setTextSize(20);
@@ -161,5 +165,11 @@ public class Activity3 extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent i = new Intent(Activity3.this,MainActivity.class);
+        startActivity(i);
+    }
 
 }
