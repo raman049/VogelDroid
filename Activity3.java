@@ -2,6 +2,8 @@ package com.vogelplay.vogel3;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -17,8 +19,12 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.facebook.FacebookSdk;
 
+import com.facebook.CallbackManager;
+import com.facebook.login.LoginManager;
+import com.facebook.share.model.SharePhoto;
+import com.facebook.share.model.SharePhotoContent;
+import com.facebook.share.widget.ShareDialog;
 
 
 public class Activity3 extends AppCompatActivity {
@@ -26,6 +32,9 @@ public class Activity3 extends AppCompatActivity {
     PopupWindow popUpWindow;
     ImageButton scoreboard;
     FrameLayout frameLayout3;
+    private CallbackManager callbackManager;
+    private LoginManager loginManager;
+    ShareDialog shareDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +51,12 @@ public class Activity3 extends AppCompatActivity {
         setContentView(frameLayout3);
         int width = this.getResources().getDisplayMetrics().widthPixels;
         int height = this.getResources().getDisplayMetrics().heightPixels;
-  //  HIGH SCORE
+
+        callbackManager = CallbackManager.Factory.create();
+        shareDialog = new ShareDialog(this);
+
+
+        //  HIGH SCORE
         FrameLayout.LayoutParams flpHighScore=new FrameLayout.LayoutParams(1000,320);
         flpHighScore.setMargins(width/3-500,height/10,0,0);
         TextView highScore = new TextView(this);
@@ -75,11 +89,8 @@ public class Activity3 extends AppCompatActivity {
         replayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Connect();
                 Intent i = new Intent(com.vogelplay.vogel3.Activity3.this, Activity2.class);
                 startActivity(i);
-                //Toast toast = Toast.makeText(MainActivity.this, "You clicked button " + v.getId(), Toast.LENGTH_LONG);
-                // toast.show();
             }
         });
         frameLayout3.addView(replayButton);
@@ -133,8 +144,7 @@ public class Activity3 extends AppCompatActivity {
         fbButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast toast = Toast.makeText(Activity3.this, "You clicked FB button " + v.getId(), Toast.LENGTH_LONG);
-                toast.show();
+                publishImage();
             }
         });
         frameLayout3.addView(fbButton);
@@ -162,7 +172,18 @@ public class Activity3 extends AppCompatActivity {
 
 
     }
+public void publishImage(){
+    Bitmap image = BitmapFactory.decodeResource(getResources(), R.drawable.injuredbird);
+    SharePhoto photo = new SharePhoto.Builder()
+            .setBitmap(image)
+            .build();
+    SharePhotoContent content = new SharePhotoContent.Builder()
+            .addPhoto(photo)
+            .build();
+    shareDialog.show(content);
 
+
+}
     @Override
     public void onBackPressed() {
         super.onBackPressed();
