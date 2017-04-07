@@ -10,32 +10,33 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
-import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 //import android.*;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by maharjan on 3/9/17.
  */
 
 public class Activity2 extends AppCompatActivity {
-    boolean gameOver, started;
+    boolean started;
+    Boolean gameOver = false;
     DrawView drawView;
     FrameLayout frameLayout, frameLayout2;
-    int width, height;
+    int width, height,sc;
+    int scoreInt=0;
     Typeface face;
     Paint rectPaint;
     TextView tap,high_score,score;
@@ -69,20 +70,26 @@ public class Activity2 extends AppCompatActivity {
         public DrawView(Context context) {
             super(context);
             rectPaint = new Paint();
-            rectPaint.setColor(Color.RED);
+            rectPaint.setColor(Color.BLACK);
             rectPaint.setStyle(Paint.Style.STROKE);
             rectPaint.setStrokeWidth(3);
-            bird_rect = new Rect(width / 3, height / 2, width / 3 + 60, height / 2 + 30);
+            bird_rect = new Rect(width / 3, height / 2, width / 3 + width/20, height / 2 + height/20);
         }
 
         @Override
         public void onDraw(Canvas canvas) {
             super.onDraw(canvas);
-            Paint rectPaint = new Paint();
-            rectPaint.setColor(Color.BLACK);
-            rectPaint.setStyle(Paint.Style.STROKE);
-            rectPaint.setStrokeWidth(3);
-            if (started == true && gameOver != true) {
+            if (started == true && gameOver == false) {
+                canvas.drawRect(bird_rect, rectPaint);
+                canvas.drawRect(rectJetYellow,rectPaint);
+                canvas.drawRect(rectJetPurple,rectPaint);
+                canvas.drawRect(rectCloud1,rectPaint);
+                canvas.drawRect(rectCloud2,rectPaint);
+                canvas.drawRect(rectCloud3,rectPaint);
+                canvas.drawRect(rectShip,rectPaint);
+                canvas.drawRect(rectTree,rectPaint);
+                canvas.drawRect(rectFly,rectPaint);
+                canvas.drawRect(rectP_tree,rectPaint);
                 moveJet();
                 moveCloud();
                 moveShip();
@@ -90,26 +97,27 @@ public class Activity2 extends AppCompatActivity {
                 moveTree();
                 moveFly();
                 moveP_tree();
-                checkCollision();
-            }
-            canvas.drawRect(bird_rect, rectPaint);
-            canvas.drawRect(rectJetYellow,rectPaint);
-            canvas.drawRect(rectJetPurple,rectPaint);
-            canvas.drawRect(rectCloud1,rectPaint);
-            canvas.drawRect(rectCloud2,rectPaint);
-            canvas.drawRect(rectCloud3,rectPaint);
-            canvas.drawRect(rectShip,rectPaint);
-            canvas.drawRect(rectTree,rectPaint);
-            canvas.drawRect(rectFly,rectPaint);
-            canvas.drawRect(rectP_tree,rectPaint);
-            if (gameOver == true) {
-               canvas.drawText("GameOver", width / 2, height / 2, rectPaint);
+                gameOverCollision();
+                scoreSelection();
+                scoreCollision();
 
+            }
+
+            if(gameOver == true){
+                gameOverCause();
+                gameOver = false;
+                started = false;
             }
 
             invalidate();
         }
         Boolean avoidGravity;
+        Boolean collision_jets = false;
+        Boolean collision_clouds = false;
+        Boolean collision_shark = false;
+        Boolean collision_tree = false;
+        Boolean collision_Ptree = false;
+        Boolean collision_fly = false;
         int agCount;
         public void gravity() {
             if (avoidGravity == true){
@@ -120,7 +128,7 @@ public class Activity2 extends AppCompatActivity {
                 }
             }else {
                 if (started == true) {
-                    for (int i = 0; i < 5; i++) {
+                    for (int i = 0; i < 6; i++) {
                         bird_rect.top += i / 2;
                         bird_rect.bottom += i / 2;
                         flpBird.setMargins(bird_rect.left - 30, bird_rect.top - 50, bird_rect.right, bird_rect.bottom);
@@ -130,9 +138,36 @@ public class Activity2 extends AppCompatActivity {
                 }
             }
         }
-
-        public void checkCollision() {
-
+        public void scoreCollision(){
+            Rect br = bird_rect;
+            Rect rf = rectFly;
+            Rect rt = rectTree;
+            Rect rpt = rectP_tree;
+            if(br.intersect(rf)){
+                collision_fly = true;
+            }
+            if(br.intersect(rt)){
+                collision_tree = true;
+            }
+            if(br.intersect(rpt)){
+                collision_Ptree = true;
+            }
+        }
+        public void scoreSelection(){
+            if ( collision_fly == true){
+                collision_fly = false;
+                scoreInt +=50;
+            }
+            if(collision_tree == true){
+                collision_tree = false;
+                scoreInt += 500;
+                addCoconut();
+            }if(collision_Ptree == true){
+                collision_Ptree = false;
+                scoreInt += 1000;
+            }
+        }
+        public void gameOverCollision() {
             Rect br = bird_rect;
             Rect rjy = rectJetYellow;
             Rect rjp = rectJetPurple;
@@ -140,17 +175,16 @@ public class Activity2 extends AppCompatActivity {
             Rect rc2 = rectCloud2;
             Rect rc3 = rectCloud3;
             Rect rs = rectShip;
-            Rect rf = rectFly;
-
             if (br.intersect(rjy) || (br.intersect(rjp))) {
-                addBang();
+                collision_jets = true;
                 gameOver = true;
             }
             if((br.intersect(rc1)||(br.intersect(rc2))||(br.intersect(rc3)))){
-                addThunder();
+                collision_clouds = true;
                 gameOver = true;
             }
-            if(br.intersect(rf)){
+            if (bird_rect.bottom > 83*height/90){
+                collision_shark = true;
                 gameOver = true;
             }
             if(br.intersect(rs)){
@@ -161,18 +195,33 @@ public class Activity2 extends AppCompatActivity {
                 bird_rect.bottom += height/20;
                 bird_rect.top +=height/20;
             }
-            if (gameOver == true) {
-                frameLayout.removeView(high_score);
-                addTextHighScore();
-                Intent i = new Intent(Activity2.this,Activity3.class);
-                startActivity(i);
+        }
+        public void gameOverCause(){
+            if(collision_jets == true){
+                addBang();
+                collision_jets = false;
+            }if(collision_clouds == true){
+                addThunder();
+                collision_clouds = false;
+            }else if(collision_shark == true){
+                addShark();
+                collision_shark = false;
             }
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    Intent i2 = new Intent(Activity2.this,Activity3.class);
+                    startActivity(i2);
+                }
+            }, 500);
+
         }
 
         public void fly() {
             avoidGravity = true;
-            bird_rect.top -= height/11;
-            bird_rect.bottom -= height/11;
+            scoreInt += 10;
+            bird_rect.top -= height/10;
+            bird_rect.bottom -= height/10;
             birdImage.setImageResource(R.drawable.bird2);
             flpBird.setMargins(bird_rect.left - 30, bird_rect.top - 50, bird_rect.right, bird_rect.bottom);
             birdImage.setLayoutParams(flpBird);
@@ -187,8 +236,9 @@ public class Activity2 extends AppCompatActivity {
 
         @Override
         public boolean onTouchEvent(MotionEvent event) {
-            fly();
-
+            if(gameOver != true) {
+                fly();
+            }
             if (started != true) {
                 started = true;
                 frameLayout.removeView(tap);
@@ -214,28 +264,39 @@ public class Activity2 extends AppCompatActivity {
                 addFly(rectFly);
                 addP_tree(rectP_tree);
             }
-
-            if ( event.getAction() == MotionEvent.ACTION_UP){
-                birdImage.setImageResource(R.drawable.bird2);
-            }else if ( event.getAction() == MotionEvent.ACTION_DOWN){
-              //  birdImage.setImageResource(R.drawable.bird2);
+            if(started == true){
+                sc = scoreInt;
+                String score_sting = "Score: \n  "+ sc;
+                score.setText(score_sting);
             }
+
             return super.onTouchEvent(event);
         }
     }
+
+    Rect bird_rect;
+    Rect rectJetYellow = jetRect();
+    Rect rectJetPurple = jetRect();
+    Rect rectCloud1 = cloudRect();
+    Rect rectCloud2 = cloudRect();
+    Rect rectCloud3 = cloudRect();
+    Rect rectShip = shipRect();
+    Rect rectTree = treeRect();
+    Rect rectFly = flyRect();
+    Rect rectP_tree = p_treeRect();
     public void addTextT2S(){
-    tap = new TextView(this);
-    tap.setTypeface(face);
-    tap.setText("Tap To Start");
-    tap.setGravity(Gravity.CENTER);
-    tap.setTextColor(Color.YELLOW);
-    tap.setTextSize(45);
-    FrameLayout.LayoutParams flpTtoS = new FrameLayout.LayoutParams(
-            width/2,height/3);
-    flpTtoS.setMargins(width/4,height/3,0,0);
-    tap.setLayoutParams(flpTtoS);
-    frameLayout.addView(tap);
-}
+        tap = new TextView(this);
+        tap.setTypeface(face);
+        tap.setText("Tap To Start");
+        tap.setGravity(Gravity.CENTER);
+        tap.setTextColor(Color.YELLOW);
+        tap.setTextSize(45);
+        FrameLayout.LayoutParams flpTtoS = new FrameLayout.LayoutParams(
+                width/2,height/3);
+        flpTtoS.setMargins(width/4,height/3,0,0);
+        tap.setLayoutParams(flpTtoS);
+        frameLayout.addView(tap);
+    }
     public void addTextHighScore(){
         high_score = new TextView(this);
         high_score.setTypeface(face);
@@ -247,7 +308,7 @@ public class Activity2 extends AppCompatActivity {
         FrameLayout.LayoutParams flpTtoS = new FrameLayout.LayoutParams(
                 width/2,height/5);
         flpTtoS.setMargins(width/4,height/6,0,0);
-       // high_score.setBackgroundColor(Color.DKGRAY);
+        // high_score.setBackgroundColor(Color.DKGRAY);
         high_score.setLayoutParams(flpTtoS);
 
         if(started == true){
@@ -265,7 +326,8 @@ public class Activity2 extends AppCompatActivity {
         score.setGravity(Gravity.LEFT);
         score.setTextColor(Color.BLUE);
         score.setTextSize(height/55);
-        String score_sting = "Score: \n 00000000";
+        sc = scoreInt;
+        String score_sting = "Score: \n  "+ sc;
         score.setText(score_sting);
         FrameLayout.LayoutParams flpTtoS = new FrameLayout.LayoutParams(
                 width/3,height/5);
@@ -311,16 +373,6 @@ public class Activity2 extends AppCompatActivity {
         }
 
     }
-    Rect bird_rect;
-    Rect rectJetYellow = jetRect();
-    Rect rectJetPurple = jetRect();
-    Rect rectCloud1 = cloudRect();
-    Rect rectCloud2 = cloudRect();
-    Rect rectCloud3 = cloudRect();
-    Rect rectShip = shipRect();
-    Rect rectTree = treeRect();
-    Rect rectFly = flyRect();
-    Rect rectP_tree = p_treeRect();
     public Rect shipRect() {
         Random randomX1 = new Random();
         int randomXX= randomX1.nextInt(500);
@@ -376,7 +428,6 @@ public class Activity2 extends AppCompatActivity {
         rotate_bang.setRepeatCount(0);
         rotate_bang.setInterpolator(new LinearInterpolator());
         bangImage.startAnimation(rotate_bang);
-
     }
     public void addThunder(){
         FrameLayout.LayoutParams flpThunder = new FrameLayout.LayoutParams(
@@ -386,6 +437,20 @@ public class Activity2 extends AppCompatActivity {
         thunderImage.setImageResource(R.drawable.lightning);
         thunderImage.setLayoutParams(flpThunder);
         frameLayout.addView(thunderImage);
+    }
+    public void addShark(){
+        FrameLayout.LayoutParams flpShark = new FrameLayout.LayoutParams(
+                width/6,width/6);
+        flpShark.setMargins(bird_rect.left -width/6 , height,0,0);
+        ImageView sharkImage = new ImageView(this);
+        sharkImage.setImageResource(R.drawable.shark);
+        sharkImage.setLayoutParams(flpShark);
+        frameLayout.addView(sharkImage);
+        TranslateAnimation move_shark = new TranslateAnimation(0, width/12, 0, -height/7);
+        move_shark.setInterpolator(new LinearInterpolator());
+        move_shark.setDuration(450);
+        move_shark.setRepeatCount(0);
+        sharkImage.startAnimation(move_shark);
     }
     public void addBird(){
         flpBird = new FrameLayout.LayoutParams(
@@ -530,13 +595,27 @@ public class Activity2 extends AppCompatActivity {
         frameLayout2.addView(tree);
     }
     public void moveTree() {
-        rectTree.left -= 1;
-        rectTree.right -= 1;
+        rectTree.left -= 20;
+        rectTree.right -= 20;
         fl_tree.setMargins(rectTree.left-width/12 , rectTree.top -20 , rectTree.left + 200, rectTree.top + 200);
         tree.setLayoutParams(fl_tree);
         if (rectTree.left < -100) {
             rectTree = treeRect();
         }
+    }
+    public void addCoconut(){
+        FrameLayout.LayoutParams flpCoconut = new FrameLayout.LayoutParams(
+                width/30,width/30);
+        flpCoconut.setMargins(bird_rect.left -width/60 , bird_rect.bottom,0,0);
+        ImageView coconutImage = new ImageView(this);
+        coconutImage.setImageResource(R.drawable.fruit);
+        coconutImage.setLayoutParams(flpCoconut);
+        frameLayout.addView(coconutImage);
+        TranslateAnimation move_coconut = new TranslateAnimation(0, 20, 0, +height/7);
+        move_coconut.setInterpolator(new LinearInterpolator());
+        move_coconut.setDuration(450);
+        move_coconut.setRepeatCount(0);
+        coconutImage.startAnimation(move_coconut);
     }
     public Rect p_treeRect() {
         Random randomX1 = new Random();
