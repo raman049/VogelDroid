@@ -43,6 +43,15 @@ public class Activity2 extends AppCompatActivity {
     TextView tap,high_score,score, coconutScore;
     ImageView birdImage,ship,jetY,jetP,cloud1,cloud2,cloud3,tree,fly,p_tree;
     FrameLayout.LayoutParams flpBird,fl_jetY,fl_jetP,fl_cloud1,fl_cloud2,fl_cloud3,fl_ship,fl_tree,fl_fly,fl_pTree;
+    Boolean avoidGravity;
+    Boolean collision_jets = false;
+    Boolean collision_clouds = false;
+    Boolean collision_shark = false;
+    Boolean collision_tree = false;
+    Boolean collision_Ptree = false;
+    Boolean collision_fly = false;
+    Boolean addScore = true;
+    int agCount;
     protected void onCreate(Bundle savedInstanceState) {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -74,7 +83,7 @@ public class Activity2 extends AppCompatActivity {
             rectPaint.setColor(Color.BLACK);
             rectPaint.setStyle(Paint.Style.STROKE);
             rectPaint.setStrokeWidth(3);
-            bird_rect = new Rect(width / 3, height / 2, width / 3 + width/20, height / 2 + height/20);
+            bird_rect = new Rect(width / 3, height / 2, width / 3 + width/30, height / 2 + height/35);
         }
 
         @Override
@@ -114,27 +123,19 @@ public class Activity2 extends AppCompatActivity {
 
             invalidate();
         }
-        Boolean avoidGravity;
-        Boolean collision_jets = false;
-        Boolean collision_clouds = false;
-        Boolean collision_shark = false;
-        Boolean collision_tree = false;
-        Boolean collision_Ptree = false;
-        Boolean collision_fly = false;
-        Boolean addScore = true;
-        int agCount;
+
         public void gravity() {
             if (avoidGravity == true){
                 agCount = agCount +1;
-                if(agCount == 3) {
+                if(agCount == 4) {
                     avoidGravity = false;
                     agCount = 0;
                 }
             }else {
                 if (started == true) {
-                    for (int i = 0; i < 6; i++) {
-                        bird_rect.top += i / 2;
-                        bird_rect.bottom += i / 2;
+                    for (int i = 0; i < 9; i++) {
+                        bird_rect.top += i / 3;
+                        bird_rect.bottom += i / 3;
                         flpBird.setMargins(bird_rect.left - 30, bird_rect.top - 50, bird_rect.right, bird_rect.bottom);
                         birdImage.setImageResource(R.drawable.bird1);
                         birdImage.setLayoutParams(flpBird);
@@ -157,7 +158,6 @@ public class Activity2 extends AppCompatActivity {
                 collision_Ptree = true;
             }
             addScore = false;
-
         }
         public void scoreSelection(){
 
@@ -233,15 +233,20 @@ public class Activity2 extends AppCompatActivity {
         }
 
         public void fly() {
+            try {
+                Thread.sleep(20);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             avoidGravity = true;
             scoreInt += 10;
-            bird_rect.top -= height/10;
-            bird_rect.bottom -= height/10;
+            bird_rect.top -= height/9;
+            bird_rect.bottom -= height/9;
             birdImage.setImageResource(R.drawable.bird2);
             flpBird.setMargins(bird_rect.left - 30, bird_rect.top - 50, bird_rect.right, bird_rect.bottom);
             birdImage.setLayoutParams(flpBird);
             try {
-                Thread.sleep(20);
+                Thread.sleep(40);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -390,27 +395,27 @@ public class Activity2 extends AppCompatActivity {
     }
     public Rect shipRect() {
         Random randomX1 = new Random();
-        int randomXX= randomX1.nextInt(500);
-        int randomYY =  height*8/10 +randomX1.nextInt(80);
+        int randomXX= randomX1.nextInt(50);
+        int randomYY =  height*71/100 +randomX1.nextInt(80);
         int rectL = -width -50- randomXX;
         int rectT= randomYY;
-        Rect shipPurp =new Rect( rectL, rectT,rectL + width/6 , rectT + height/10);
+        Rect shipPurp =new Rect( rectL, rectT,rectL + width/3 , rectT + height/10);
         return shipPurp;
     }
     public void addShip(Rect rect) {
         frameLayout2.removeView(ship);
         fl_ship = new FrameLayout.LayoutParams(
-                width/4, height/4);
-        fl_ship.setMargins(rect.left-width/33, rect.top-height/20, rect.left + 200, rect.top + 200);
+                width/2, height/2);
+        fl_ship.setMargins(rect.left-width/12, rect.top-height/5, rect.left + 300, rect.top + 300);
         ship = new ImageView(this);
         ship.setImageResource(R.drawable.ship2);
         ship.setLayoutParams(fl_ship);
         frameLayout2.addView(ship);
     }
     public void moveShip() {
-        rectShip.left += 2;
-        rectShip.right += 2;
-        fl_ship.setMargins(rectShip.left-20 , rectShip.top - height/11 , rectShip.left + 200, rectShip.top + 200);
+        rectShip.left += 10;
+        rectShip.right += 10;
+        fl_ship.setMargins(rectShip.left-width/12 , rectShip.top - height/5 , rectShip.left + 300, rectShip.top + 300);
         ship.setLayoutParams(fl_ship);
         if (rectShip.left > width) {
             rectShip = shipRect();
@@ -593,26 +598,26 @@ public class Activity2 extends AppCompatActivity {
     public Rect treeRect() {
         Random randomX1 = new Random();
         int randomXX= randomX1.nextInt(100);
-        int randomYY = height*75/100 + randomX1.nextInt(20);
+        int randomYY = height*70/100 + randomX1.nextInt(20);
         int rectL = width + randomXX;
         int rectT= randomYY;
-        Rect jetPurp =new Rect(rectL, rectT,rectL + width/14, rectT + height/5);
+        Rect jetPurp =new Rect(rectL, rectT,rectL + width/20, rectT + height/5);
         return jetPurp;
     }
     public void addTree(Rect rect) {
         frameLayout2.removeView(tree);
         fl_tree = new FrameLayout.LayoutParams(
-                width/4, height/4);
-        fl_tree.setMargins(rect.left-width/33, rect.top, rect.left + 200, rect.top + 200);
+                width/3, height/3);
+        fl_tree.setMargins(rect.left-width/7, rect.top-25, rect.left + 200, rect.top + 200);
         tree = new ImageView(this);
         tree.setImageResource(R.drawable.tree);
         tree.setLayoutParams(fl_tree);
         frameLayout2.addView(tree);
     }
     public void moveTree() {
-        rectTree.left -= 20;
-        rectTree.right -= 20;
-        fl_tree.setMargins(rectTree.left-width/12 , rectTree.top -20 , rectTree.left + 200, rectTree.top + 200);
+        rectTree.left -= 2;
+        rectTree.right -= 2;
+        fl_tree.setMargins(rectTree.left-width/7 , rectTree.top -25 , rectTree.left , rectTree.top + 200);
         tree.setLayoutParams(fl_tree);
         if (rectTree.left < -100) {
             rectTree = treeRect();
@@ -627,7 +632,7 @@ public class Activity2 extends AppCompatActivity {
         coconutImage.setLayoutParams(flpCoconut);
         frameLayout.addView(coconutImage);
         TranslateAnimation move_coconut = new TranslateAnimation(0, width/20, 0, +height/3);
-        move_coconut.setDuration(500);
+        move_coconut.setDuration(900);
         move_coconut.setFillAfter(true);
         move_coconut.setRepeatCount(0);
         coconutImage.startAnimation(move_coconut);
@@ -653,7 +658,7 @@ public class Activity2 extends AppCompatActivity {
         pineappleImage.setLayoutParams(flpCoconut);
         frameLayout.addView(pineappleImage);
         TranslateAnimation move_coconut = new TranslateAnimation(0, width/20, 0, +height/3);
-        move_coconut.setDuration(500);
+        move_coconut.setDuration(900);
         move_coconut.setFillAfter(true);
         move_coconut.setRepeatCount(0);
         pineappleImage.startAnimation(move_coconut);
@@ -689,7 +694,7 @@ public class Activity2 extends AppCompatActivity {
         Random randomX1 = new Random();
         int randomXX= randomX1.nextInt(500);
         int rectL = width + randomXX;
-        int randomYY = height*80/100 + randomX1.nextInt(20);
+        int randomYY = height*85/100 + randomX1.nextInt(20);
         int rectT= randomYY;
         Rect jetPurp =new Rect(rectL, rectT,rectL + width/10, rectT + height/20);
         return jetPurp;
@@ -707,7 +712,7 @@ public class Activity2 extends AppCompatActivity {
     public void moveP_tree() {
         rectP_tree.left -= 1;
         rectP_tree.right -= 1;
-        fl_pTree.setMargins(rectP_tree.left-width/20 , rectP_tree.top -height/30, rectP_tree.left + 20, rectP_tree.top + 20);
+        fl_pTree.setMargins(rectP_tree.left-width/20 , rectP_tree.top -height/15, rectP_tree.left + 20, rectP_tree.top + 20);
         p_tree.setLayoutParams(fl_pTree);
         if (rectP_tree.left < -100) {
             rectP_tree = p_treeRect();
@@ -731,20 +736,18 @@ public class Activity2 extends AppCompatActivity {
         fly.setImageResource(R.drawable.fly2);
         fly.setLayoutParams(fl_fly);
         frameLayout2.addView(fly);
+        TranslateAnimation fly_animation = new TranslateAnimation(0,0,0,35);
+        fly_animation.setRepeatCount(-1);
+        fly_animation.setRepeatMode(1);
+        fly_animation.setDuration(200);
+        fly_animation.setFillAfter(true);
+        fly.startAnimation(fly_animation);
     }
-    int oo = 0;
+
     public void moveFly() {
         rectFly.left -= 5;
         rectFly.right -= 5;
-        oo += 1;
-        if(oo%2 == 0){
-            rectFly.top += 10;
-            rectFly.bottom += 10;
-        }else{
-            rectFly.top -= 10;
-            rectFly.bottom -= 10;
-        }
-        fl_fly.setMargins(rectFly.left-width/30 , rectFly.top -height/30 , rectFly.left + 20, rectFly.top + 20);
+        fl_fly.setMargins(rectFly.left-width/36 , rectFly.top -height/30 , rectFly.left + 20, rectFly.top + 20);
         fly.setLayoutParams(fl_fly);
         if (rectFly.left < -100) {
             rectFly = flyRect();
