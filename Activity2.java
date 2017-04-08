@@ -17,6 +17,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
+import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -39,7 +40,7 @@ public class Activity2 extends AppCompatActivity {
     int scoreInt=0;
     Typeface face;
     Paint rectPaint;
-    TextView tap,high_score,score;
+    TextView tap,high_score,score, coconutScore;
     ImageView birdImage,ship,jetY,jetP,cloud1,cloud2,cloud3,tree,fly,p_tree;
     FrameLayout.LayoutParams flpBird,fl_jetY,fl_jetP,fl_cloud1,fl_cloud2,fl_cloud3,fl_ship,fl_tree,fl_fly,fl_pTree;
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,9 +99,11 @@ public class Activity2 extends AppCompatActivity {
                 moveFly();
                 moveP_tree();
                 gameOverCollision();
-                scoreSelection();
-                scoreCollision();
 
+            }
+            if(addScore == true && started == true){
+                scoreCollision();
+                scoreSelection();
             }
 
             if(gameOver == true){
@@ -118,6 +121,7 @@ public class Activity2 extends AppCompatActivity {
         Boolean collision_tree = false;
         Boolean collision_Ptree = false;
         Boolean collision_fly = false;
+        Boolean addScore = true;
         int agCount;
         public void gravity() {
             if (avoidGravity == true){
@@ -143,20 +147,24 @@ public class Activity2 extends AppCompatActivity {
             Rect rf = rectFly;
             Rect rt = rectTree;
             Rect rpt = rectP_tree;
-            if(br.intersect(rf)){
+            if(br.intersects(rf.left,rf.top,rf.right,rf.bottom)){
                 collision_fly = true;
             }
-            if(br.intersect(rt)){
+            if(br.intersects(rt.left,rt.top,rt.right,rt.bottom)){
                 collision_tree = true;
             }
-            if(br.intersect(rpt)){
+            if(br.intersects(rpt.left,rpt.top,rpt.right,rpt.bottom)){
                 collision_Ptree = true;
             }
+            addScore = false;
+
         }
         public void scoreSelection(){
+
             if ( collision_fly == true){
                 collision_fly = false;
                 scoreInt +=50;
+                addflyscore();
             }
             if(collision_tree == true){
                 collision_tree = false;
@@ -165,7 +173,14 @@ public class Activity2 extends AppCompatActivity {
             }if(collision_Ptree == true){
                 collision_Ptree = false;
                 scoreInt += 1000;
+                addPineapple();
             }
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    addScore = true;
+                }
+            }, 500);
         }
         public void gameOverCollision() {
             Rect br = bird_rect;
@@ -187,7 +202,7 @@ public class Activity2 extends AppCompatActivity {
                 collision_shark = true;
                 gameOver = true;
             }
-            if(br.intersect(rs)){
+            if(br.intersects(rs.left,rs.top,rs.right,rs.bottom)){
                 bird_rect.bottom -= height/20;
                 bird_rect.top -=height/20;
             }
@@ -607,16 +622,69 @@ public class Activity2 extends AppCompatActivity {
         FrameLayout.LayoutParams flpCoconut = new FrameLayout.LayoutParams(
                 width/30,width/30);
         flpCoconut.setMargins(bird_rect.left -width/60 , bird_rect.bottom,0,0);
-        ImageView coconutImage = new ImageView(this);
+        final ImageView coconutImage = new ImageView(this);
         coconutImage.setImageResource(R.drawable.fruit);
         coconutImage.setLayoutParams(flpCoconut);
         frameLayout.addView(coconutImage);
-        TranslateAnimation move_coconut = new TranslateAnimation(0, 20, 0, +height/7);
-        move_coconut.setInterpolator(new LinearInterpolator());
-        move_coconut.setDuration(450);
+        TranslateAnimation move_coconut = new TranslateAnimation(0, width/20, 0, +height/3);
+        move_coconut.setDuration(500);
+        move_coconut.setFillAfter(true);
         move_coconut.setRepeatCount(0);
         coconutImage.startAnimation(move_coconut);
+        coconutScore = new TextView(this);
+        coconutScore.setTypeface(face);
+        coconutScore.setGravity(Gravity.CENTER);
+        coconutScore.setTextColor(Color.YELLOW);
+        coconutScore.setTextSize(25);
+        String sting = "+ 500";
+        coconutScore.setText(sting);
+        FrameLayout.LayoutParams flpTtoS = new FrameLayout.LayoutParams(
+                width/4,height/4);
+        flpTtoS.setMargins(width*3/8,height/6,0,0);
+        coconutScore.setLayoutParams(flpTtoS);
+        frameLayout.addView(coconutScore);
     }
+    public void addPineapple(){
+        FrameLayout.LayoutParams flpCoconut = new FrameLayout.LayoutParams(
+                width/30,width/30);
+        flpCoconut.setMargins(bird_rect.left -width/60 , bird_rect.bottom,0,0);
+        final ImageView pineappleImage = new ImageView(this);
+        pineappleImage.setImageResource(R.drawable.pineapple);
+        pineappleImage.setLayoutParams(flpCoconut);
+        frameLayout.addView(pineappleImage);
+        TranslateAnimation move_coconut = new TranslateAnimation(0, width/20, 0, +height/3);
+        move_coconut.setDuration(500);
+        move_coconut.setFillAfter(true);
+        move_coconut.setRepeatCount(0);
+        pineappleImage.startAnimation(move_coconut);
+        TextView pineappleScore = new TextView(this);
+        pineappleScore.setTypeface(face);
+        pineappleScore.setGravity(Gravity.CENTER);
+        pineappleScore.setTextColor(Color.YELLOW);
+        pineappleScore.setTextSize(25);
+        String sting = "+ 1000";
+        pineappleScore.setText(sting);
+        FrameLayout.LayoutParams flpTtoS = new FrameLayout.LayoutParams(
+                width/4,height/4);
+        flpTtoS.setMargins(width*3/8,height/6,0,0);
+        pineappleScore.setLayoutParams(flpTtoS);
+        frameLayout.addView(pineappleScore);
+    }
+    public void addflyscore(){
+        TextView flyScore = new TextView(this);
+        flyScore.setTypeface(face);
+        flyScore.setGravity(Gravity.CENTER);
+        flyScore.setTextColor(Color.YELLOW);
+        flyScore.setTextSize(25);
+        String sting = "+ 50";
+        flyScore.setText(sting);
+        FrameLayout.LayoutParams flpTtoS = new FrameLayout.LayoutParams(
+                width/4,height/4);
+        flpTtoS.setMargins(width*3/8,height/6,0,0);
+        flyScore.setLayoutParams(flpTtoS);
+        frameLayout.addView(flyScore);
+    }
+
     public Rect p_treeRect() {
         Random randomX1 = new Random();
         int randomXX= randomX1.nextInt(500);
