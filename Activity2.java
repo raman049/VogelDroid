@@ -133,7 +133,7 @@ public class Activity2 extends AppCompatActivity {
                 }
             }else {
                 if (started == true) {
-                    for (int i = 0; i < 9; i++) {
+                    for (int i = 0; i < 15; i++) {
                         bird_rect.top += i / 3;
                         bird_rect.bottom += i / 3;
                         flpBird.setMargins(bird_rect.left - 30, bird_rect.top - 50, bird_rect.right, bird_rect.bottom);
@@ -413,8 +413,8 @@ public class Activity2 extends AppCompatActivity {
         frameLayout2.addView(ship);
     }
     public void moveShip() {
-        rectShip.left += 10;
-        rectShip.right += 10;
+        rectShip.left += 1;
+        rectShip.right += 1;
         fl_ship.setMargins(rectShip.left-width/12 , rectShip.top - height/5 , rectShip.left + 300, rectShip.top + 300);
         ship.setLayoutParams(fl_ship);
         if (rectShip.left > width) {
@@ -491,8 +491,6 @@ public class Activity2 extends AppCompatActivity {
         return jetPurp;
     }
     public void addJetYellow(Rect rect) {
-        rect.left -= 10;
-        rect.right -= 10;
         frameLayout2.removeView(jetY);
         fl_jetY = new FrameLayout.LayoutParams(
                 width/6, width/9);
@@ -503,8 +501,6 @@ public class Activity2 extends AppCompatActivity {
         frameLayout2.addView(jetY);
     }
     public void addJetPurple(Rect rect) {
-        rect.left -= 10;
-        rect.right -= 10;
         frameLayout2.removeView(jetP);
         fl_jetP = new FrameLayout.LayoutParams(
                 width/6, width/9);
@@ -516,8 +512,8 @@ public class Activity2 extends AppCompatActivity {
     }
     public void moveJet(){
         //JET YELLOW MOTION
-        rectJetYellow.left -= 10;
-        rectJetYellow.right -=10;
+        rectJetYellow.left -= 9;
+        rectJetYellow.right -=9;
         fl_jetY.setMargins(rectJetYellow.left-75, rectJetYellow.top-75, rectJetYellow.left + 200, rectJetYellow.top + 200);
         jetY.setLayoutParams(fl_jetY);
         if (rectJetYellow.right < -100) {
@@ -549,7 +545,6 @@ public class Activity2 extends AppCompatActivity {
         cloud1 = new ImageView(this);
         cloud1.setImageResource(R.drawable.cloud1);
         cloud1.setLayoutParams(fl_cloud1);
-        //cloud1.setBackgroundColor(Color.BLACK);
         frameLayout2.addView(cloud1);
     }
     public void addCloud2(Rect rect) {
@@ -573,22 +568,22 @@ public class Activity2 extends AppCompatActivity {
         frameLayout2.addView(cloud3);
     }
     public void moveCloud() {
-        rectCloud1.left -= 10;
-        rectCloud1.right -= 10;
+        rectCloud1.left -= 5;
+        rectCloud1.right -= 5;
         fl_cloud1.setMargins(rectCloud1.left-width/25, rectCloud1.top-width/25, rectCloud1.left + 200, rectCloud1.top + 200);
         cloud1.setLayoutParams(fl_cloud1);
         if (rectCloud1.right < -100) {
             rectCloud1 = cloudRect();
         }
-        rectCloud2.left -= 9;
-        rectCloud2.right -= 9;
+        rectCloud2.left -= 4;
+        rectCloud2.right -= 4;
         fl_cloud2.setMargins(rectCloud2.left-width/25, rectCloud2.top-width/20, rectCloud2.left + 200, rectCloud2.top + 200);
         cloud2.setLayoutParams(fl_cloud2);
         if (rectCloud2.right < -100) {
             rectCloud2 = cloudRect();
         }
-        rectCloud3.left -= 8;
-        rectCloud3.right -= 8;
+        rectCloud3.left -= 6;
+        rectCloud3.right -= 6;
         fl_cloud3.setMargins(rectCloud3.left-width/25, rectCloud3.top-width/22, rectCloud3.left + 200, rectCloud3.top + 200);
         cloud3.setLayoutParams(fl_cloud3);
         if (rectCloud3.right < -100) {
@@ -615,8 +610,8 @@ public class Activity2 extends AppCompatActivity {
         frameLayout2.addView(tree);
     }
     public void moveTree() {
-        rectTree.left -= 2;
-        rectTree.right -= 2;
+        rectTree.left -= 1;
+        rectTree.right -= 1;
         fl_tree.setMargins(rectTree.left-width/7 , rectTree.top -25 , rectTree.left , rectTree.top + 200);
         tree.setLayoutParams(fl_tree);
         if (rectTree.left < -100) {
@@ -745,8 +740,8 @@ public class Activity2 extends AppCompatActivity {
     }
 
     public void moveFly() {
-        rectFly.left -= 5;
-        rectFly.right -= 5;
+        rectFly.left -= 8;
+        rectFly.right -= 8;
         fl_fly.setMargins(rectFly.left-width/36 , rectFly.top -height/30 , rectFly.left + 20, rectFly.top + 20);
         fly.setLayoutParams(fl_fly);
         if (rectFly.left < -100) {
