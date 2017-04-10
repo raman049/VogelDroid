@@ -16,7 +16,9 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +27,10 @@ import com.facebook.login.LoginManager;
 import com.facebook.share.model.SharePhoto;
 import com.facebook.share.model.SharePhotoContent;
 import com.facebook.share.widget.ShareDialog;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 
 
 public class Activity3 extends AppCompatActivity {
@@ -55,6 +61,21 @@ public class Activity3 extends AppCompatActivity {
         callbackManager = CallbackManager.Factory.create();
         shareDialog = new ShareDialog(this);
 
+//BANNAR ADS
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+        params.addRule(RelativeLayout.ALIGN_BOTTOM,RelativeLayout.TRUE);
+        AdView adView = new AdView(this);
+        adView.setAdSize(AdSize.SMART_BANNER);
+        adView.setLayoutParams(params);
+
+        adView.setAdUnitId("ca-app-pub-7941365967795667/9898703231");
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
+// Place the ad view.
+
+        frameLayout3.addView(adView);
+
+        MobileAds.initialize(getApplicationContext(), "ca-app-pub-7941365967795667/9898703231");
 
         //  HIGH SCORE
         FrameLayout.LayoutParams flpHighScore=new FrameLayout.LayoutParams(1000,320);
