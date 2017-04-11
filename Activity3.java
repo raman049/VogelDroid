@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -35,12 +36,6 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
-import static android.R.attr.value;
-
-
 public class Activity3 extends AppCompatActivity {
 
     PopupWindow popUpWindow;
@@ -50,7 +45,8 @@ public class Activity3 extends AppCompatActivity {
     private LoginManager loginManager;
     ShareDialog shareDialog;
     InterstitialAd mInterstitialAd;
-
+    Bitmap snapImage;
+    int width,height;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -64,8 +60,8 @@ public class Activity3 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 //  Setting the RelativeLayout as our content view
         setContentView(frameLayout3);
-        int width = this.getResources().getDisplayMetrics().widthPixels;
-        int height = this.getResources().getDisplayMetrics().heightPixels;
+         width = this.getResources().getDisplayMetrics().widthPixels;
+         height = this.getResources().getDisplayMetrics().heightPixels;
 
         callbackManager = CallbackManager.Factory.create();
         shareDialog = new ShareDialog(this);
@@ -218,11 +214,18 @@ public class Activity3 extends AppCompatActivity {
         frameLayout3.addView(injured_bird);
 
 
-
+        final Handler handler2 = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                snapImage = screenShot(getWindow().getDecorView().getRootView());
+            }
+        }, 500);
     }
 
     public void publishImage() {
-        Bitmap image = BitmapFactory.decodeResource(getResources(), R.drawable.injuredbird);
+        Bitmap image = snapImage;
+                //BitmapFactory.decodeResource(getResources(), R.drawable.injuredbird);
         SharePhoto photo = new SharePhoto.Builder()
                 .setBitmap(image)
                 .build();
@@ -230,16 +233,13 @@ public class Activity3 extends AppCompatActivity {
                 .addPhoto(photo)
                 .build();
         shareDialog.show(content);
-
     }
-
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         Intent i = new Intent(Activity3.this, MainActivity.class);
         startActivity(i);
     }
-
     private void requestNewInterstitial() {
         AdRequest adRequest = new AdRequest.Builder()
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
@@ -256,9 +256,14 @@ public class Activity3 extends AppCompatActivity {
             } else {
                 Log.d("ads", "ads Mesg");
             }
-
         }
-
+    }
+    public Bitmap screenShot(View view) {
+        Bitmap bitmap = Bitmap.createBitmap(width,
+                height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        view.draw(canvas);
+        return bitmap;
     }
 
 }
