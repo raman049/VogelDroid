@@ -1,12 +1,14 @@
 package com.vogelplay.vogel3;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -18,7 +20,6 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -47,6 +48,7 @@ public class Activity3 extends AppCompatActivity {
     InterstitialAd mInterstitialAd;
     Bitmap snapImage;
     int width,height;
+    MediaPlayer loop1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -76,8 +78,8 @@ public class Activity3 extends AppCompatActivity {
         AdRequest adRequest = new AdRequest.Builder().build();
          adView.loadAd(adRequest);
 // Place the ad view.
-         frameLayout3.addView(adView);
-         MobileAds.initialize(getApplicationContext(), "ca-app-pub-7941365967795667/9898703231");
+      //   frameLayout3.addView(adView);
+        // MobileAds.initialize(getApplicationContext(), "ca-app-pub-7941365967795667/9898703231");
 
         mInterstitialAd = new InterstitialAd(this);
         mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
@@ -93,7 +95,7 @@ public class Activity3 extends AppCompatActivity {
           handler.postDelayed(new Runnable() {
              @Override
              public void run() {
-                 showAds();
+              //   showAds();
                  handler.postDelayed(this, 500);
              }
           }, 500);
@@ -102,7 +104,10 @@ public class Activity3 extends AppCompatActivity {
         FrameLayout.LayoutParams flpHighScore = new FrameLayout.LayoutParams(1000, 320);
         flpHighScore.setMargins(width / 3 - 500, height / 10, 0, 0);
         TextView highScore = new TextView(this);
-        highScore.setText("High Score: \n 000000000");
+
+        SharedPreferences prefs = this.getSharedPreferences("myPrefsKey", Context.MODE_PRIVATE);
+        int highScore_String = prefs.getInt("score", 0);
+        highScore.setText("High Score: \n"+highScore_String);
         Typeface face = Typeface.createFromAsset(getAssets(), "fonts/comici.ttf");
         highScore.setTypeface(face);
         highScore.setGravity(Gravity.CENTER);
@@ -110,19 +115,21 @@ public class Activity3 extends AppCompatActivity {
         highScore.setTextSize(20);
         highScore.setLayoutParams(flpHighScore);
         frameLayout3.addView(highScore);
-        //  PRESENT SCORE
+//PRESENT SCORE
         FrameLayout.LayoutParams flpScore = new FrameLayout.LayoutParams(
                 1000, 320);
         flpScore.setMargins(width - width / 3 - 500, height / 10, 0, 0);
         TextView presentScore = new TextView(this);
-        presentScore.setText("Your Score: \n 000000000");
+       Intent get_score = getIntent();
+        int final_score = get_score.getIntExtra("final_score",0);
+        presentScore.setText("Your Score: \n"+final_score);
         presentScore.setTypeface(face);
         presentScore.setGravity(Gravity.CENTER);
         presentScore.setTextColor(Color.YELLOW);
         presentScore.setTextSize(20);
         presentScore.setLayoutParams(flpScore);
         frameLayout3.addView(presentScore);
-        // REPLAY
+// REPLAY
         FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(width / 10, height / 6);
         lp.setMargins(width * 9 / 10 - 10, height * 6 / 7 - 30, 0, 0);
         ImageButton replayButton = new ImageButton(this);
@@ -131,7 +138,7 @@ public class Activity3 extends AppCompatActivity {
         replayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                loop1.stop();
                 Intent i = new Intent(com.vogelplay.vogel3.Activity3.this, Activity2.class);
                 startActivity(i);
             }
@@ -221,6 +228,11 @@ public class Activity3 extends AppCompatActivity {
                 snapImage = screenShot(getWindow().getDecorView().getRootView());
             }
         }, 500);
+  //ADD SOUND
+        loop1 = MediaPlayer.create(this,R.raw.intro1);
+        loop1.setLooping(true);
+        loop1.start();
+
     }
 
     public void publishImage() {
