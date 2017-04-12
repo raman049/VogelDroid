@@ -110,11 +110,11 @@ public class Activity2 extends AppCompatActivity {
                 gameOverCollision();
 
             }
-            if(addScore == true && started == true){
+            if(addScore == true){
                 scoreCollision();
                 scoreSelection();
-            }
 
+            }
             if(gameOver == true){
                 gameOverCause();
                 gameOver = false;
@@ -123,7 +123,6 @@ public class Activity2 extends AppCompatActivity {
             if (highScore < scoreInt){
                 highScore = scoreInt;
             }
-
             invalidate();
         }
            int i = 0;
@@ -145,43 +144,46 @@ public class Activity2 extends AppCompatActivity {
             }
         }
         public void scoreCollision(){
+            //addScore = false;
             Rect br = bird_rect;
             Rect rf = rectFly;
             Rect rt = rectTree;
             Rect rpt = rectP_tree;
-            if(br.intersects(rectFly.left,rectFly.top,rectFly.right,rectFly.bottom)){
+            if (CollisionTest(br,rf)){
                 collision_fly = true;
             }
-            if(br.intersects(rt.left,rt.top,rt.right,rt.bottom)){
+            if(CollisionTest(br,rt)){
                 collision_tree = true;
             }
-            if(br.intersects(rpt.left,rpt.top,rpt.right,rpt.bottom)){
+            if(CollisionTest(br,rpt)){
                 collision_p_tree = true;
             }
-            addScore = false;
         }
         public void scoreSelection(){
 
             if ( collision_fly == true){
+                collision_fly = false;
                 scoreInt +=50;
                 addflyscore();
-                collision_fly = false;
+                addScore = false;
             }
             if(collision_tree == true){
+                collision_tree = false;
                 scoreInt += 500;
                 addCoconut();
-                collision_tree = false;
+                addScore = false;
             }if(collision_p_tree == true){
+                collision_p_tree = false;
                 scoreInt += 1000;
                 addPineapple();
-                collision_p_tree = false;
+                addScore = false;
             }
-            new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    addScore = true;
-                }
-            }, 500);
+//            new Timer().schedule(new TimerTask() {
+//                @Override
+//                public void run() {
+//                    addScore = true;
+//                }
+//            }, 300);
         }
         public void gameOverCollision() {
             Rect br = bird_rect;
@@ -204,8 +206,13 @@ public class Activity2 extends AppCompatActivity {
                 gameOver = true;
             }
             if(br.intersects(rs.left,rs.top,rs.right,rs.bottom)){
-                bird_rect.bottom -= height/15;
-                bird_rect.top -=height/15;
+                bird_rect.bottom -= height/20;
+                bird_rect.top -=height/20;
+                try {
+                    Thread.sleep(5);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
             if (bird_rect.top < 0) {
                 bird_rect.bottom += height/20;
@@ -235,15 +242,16 @@ public class Activity2 extends AppCompatActivity {
 
         public void fly() {
             i = 0;
+            addScore = true;
             avoidGravity = true;
             scoreInt += 10;
-            bird_rect.top -= height/8;
-            bird_rect.bottom -= height/8;
+            bird_rect.top -= height/10;
+            bird_rect.bottom -= height/10;
             birdImage.setImageResource(R.drawable.bird2);
             flpBird.setMargins(bird_rect.left - 30, bird_rect.top - 50, bird_rect.right, bird_rect.bottom);
             birdImage.setLayoutParams(flpBird);
             try {
-                Thread.sleep(20);
+                Thread.sleep(2);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -614,8 +622,8 @@ public class Activity2 extends AppCompatActivity {
         frameLayout2.addView(tree);
     }
     public void moveTree() {
-        rectTree.left -= 1;
-        rectTree.right -= 1;
+        rectTree.left -= 10;
+        rectTree.right -= 10;
         fl_tree.setMargins(rectTree.left-width/7 , rectTree.top -25 , rectTree.left , rectTree.top + 200);
         tree.setLayoutParams(fl_tree);
         if (rectTree.left < -100) {
@@ -688,7 +696,6 @@ public class Activity2 extends AppCompatActivity {
         flyScore.setLayoutParams(flpTtoS);
         frameLayout.addView(flyScore);
     }
-
     public Rect p_treeRect() {
         Random randomX1 = new Random();
         int randomXX= randomX1.nextInt(500);
@@ -709,8 +716,8 @@ public class Activity2 extends AppCompatActivity {
         frameLayout2.addView(p_tree);
     }
     public void moveP_tree() {
-        rectP_tree.left -= 1;
-        rectP_tree.right -= 1;
+        rectP_tree.left -= 10;
+        rectP_tree.right -= 10;
         fl_pTree.setMargins(rectP_tree.left-width/20 , rectP_tree.top -height/15, rectP_tree.left + 20, rectP_tree.top + 20);
         p_tree.setLayoutParams(fl_pTree);
         if (rectP_tree.left < -100) {
@@ -723,7 +730,7 @@ public class Activity2 extends AppCompatActivity {
         int randomYY = 200 + randomX1.nextInt(500);
         int rectL =  randomXX;
         int rectT= randomYY;
-        Rect jetPurp =new Rect(rectL, rectT,rectL + width/32, rectT + height/40);
+        Rect jetPurp =new Rect(rectL, rectT,rectL + width/20, rectT + height/20);
         return jetPurp;
     }
     public void addFly(Rect rect) {
@@ -742,7 +749,6 @@ public class Activity2 extends AppCompatActivity {
         fly_animation.setFillAfter(true);
         fly.startAnimation(fly_animation);
     }
-
     public void moveFly() {
         rectFly.left -= 8;
         rectFly.right -= 8;
@@ -752,5 +758,8 @@ public class Activity2 extends AppCompatActivity {
             rectFly = flyRect();
         }
     }
-
+    public boolean CollisionTest(Rect one, Rect two) {
+        return one.left <= two.right && one.right >= two.left &&
+                one.top <= two.bottom && one.bottom >= two.top;
+    }
 }
