@@ -249,9 +249,23 @@ public class Activity3 extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        loop1.stop();
         Intent i = new Intent(Activity3.this, MainActivity.class);
         startActivity(i);
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        loop1.stop();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        loop1.start();
+    }
+
     private void requestNewInterstitial() {
         AdRequest adRequest = new AdRequest.Builder()
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
