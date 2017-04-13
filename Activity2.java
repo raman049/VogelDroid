@@ -313,6 +313,16 @@ public class Activity2 extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        loop2.stop();
+    }
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        loop2.start();
+    }
     public void fly() {
         i = 0;
         addScore = true;
