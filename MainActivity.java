@@ -154,8 +154,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        loop1.stop();
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        startActivity(intent);
+    }
+
+
+    @Override
     protected void onPause() {
         super.onPause();
+        loop1.stop();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        loop1.start();
     }
 
     @Override
