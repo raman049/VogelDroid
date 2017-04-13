@@ -80,8 +80,8 @@ public class Activity2 extends AppCompatActivity {
         shark_sound = MediaPlayer.create(this,R.raw.shark);
         blast_sound = MediaPlayer.create(this,R.raw.blast);
         thunder_sound = MediaPlayer.create(this,R.raw.sound_electric);
-        bird_sound = MediaPlayer.create(this,R.raw.fly);
-        fly_sound = MediaPlayer.create(this,R.raw.fly_sound);
+        bird_sound = MediaPlayer.create(this,R.raw.sound_bird);
+        fly_sound = MediaPlayer.create(this,R.raw.fly);
         bubble_sound = MediaPlayer.create(this,R.raw.sound_bubble);
         coconut_sound = MediaPlayer.create(this,R.raw.coconut);
         prefs = this.getSharedPreferences("myPrefsKey", Context.MODE_PRIVATE);
@@ -129,12 +129,10 @@ public class Activity2 extends AppCompatActivity {
                 moveFly();
                 moveP_tree();
                 gameOverCollision();
-
             }
             if(addScore == true){
                 scoreCollision();
                 scoreSelection();
-
             }
             if(gameOver == true){
                 gameOverCause();
@@ -236,6 +234,8 @@ public class Activity2 extends AppCompatActivity {
             addflyscore();
             fly_sound.start();
             addScore = false;
+            moveFly2();
+            //rectFly.offset(100,-100);
 
         }
         if(collision_tree == true){
@@ -244,6 +244,7 @@ public class Activity2 extends AppCompatActivity {
             addCoconut();
             coconut_sound.start();
             addScore = false;
+
         }if(collision_p_tree == true){
             collision_p_tree = false;
             scoreInt += 1000;
@@ -273,13 +274,8 @@ public class Activity2 extends AppCompatActivity {
             gameOver = true;
         }
         if(br.intersects(rs.left,rs.top,rs.right,rs.bottom)){
-            bird_rect.bottom -= height/20;
-            bird_rect.top -=height/20;
-            try {
-                Thread.sleep(5);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+
+            avoidGravity = true;
         }
         if (bird_rect.top < 0) {
             bird_rect.bottom += height/20;
@@ -313,6 +309,16 @@ public class Activity2 extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        loop2.stop();
+    }
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        loop2.start();
+    }
     public void fly() {
         i = 0;
         addScore = true;
@@ -347,10 +353,10 @@ public class Activity2 extends AppCompatActivity {
         tap.setText("Tap To Start");
         tap.setGravity(Gravity.CENTER);
         tap.setTextColor(Color.YELLOW);
-        tap.setTextSize(45);
+        tap.setTextSize(55);
         FrameLayout.LayoutParams flpTtoS = new FrameLayout.LayoutParams(
-                width/2,height/3);
-        flpTtoS.setMargins(width/4,height/3,0,0);
+                width*2/3,height/3);
+        flpTtoS.setMargins(width/6,height/3,0,0);
         tap.setLayoutParams(flpTtoS);
         frameLayout.addView(tap);
     }
@@ -359,14 +365,14 @@ public class Activity2 extends AppCompatActivity {
         high_score.setTypeface(face);
         high_score.setGravity(Gravity.CENTER);
         high_score.setTextColor(Color.RED);
-        high_score.setTextSize(25);
+        high_score.setTextSize(22);
         highScore = prefs.getInt("score", 0);
 
         if (highScore < scoreInt){
             highScore = scoreInt;
             prefs.edit().putInt("score", highScore).commit();
         }
-        String high_score_sting = "High Score: \n "+ highScore;
+        String high_score_sting = "High Score: "+ highScore;
         high_score.setText(high_score_sting);
         FrameLayout.LayoutParams flpTtoS = new FrameLayout.LayoutParams(
                 width/2,height/5);
@@ -374,6 +380,8 @@ public class Activity2 extends AppCompatActivity {
         high_score.setLayoutParams(flpTtoS);
 
         if(started == true){
+            String high_score_sting2 = "High Score: \n"+ highScore;
+            high_score.setText(high_score_sting2);
             high_score.setTextColor(Color.BLUE);
             high_score.setTextSize(height/65);
             high_score.setGravity(Gravity.LEFT);
@@ -438,11 +446,11 @@ public class Activity2 extends AppCompatActivity {
     }
     public Rect shipRect() {
         Random randomX1 = new Random();
-        int randomXX= randomX1.nextInt(50);
+        int randomXX= randomX1.nextInt(100);
         int randomYY =  height*71/100 +randomX1.nextInt(80);
-        int rectL = -width -50- randomXX;
+        int rectL =  -100- randomXX;
         int rectT= randomYY;
-        Rect shipPurp =new Rect( rectL, rectT,rectL + width/3 , rectT + height/10);
+        Rect shipPurp =new Rect( rectL, rectT,rectL + width*28/100, rectT + height/10);
         return shipPurp;
     }
     public void addShip(Rect rect) {
@@ -517,7 +525,7 @@ public class Activity2 extends AppCompatActivity {
     }
     public void addBird(){
         flpBird = new FrameLayout.LayoutParams(
-                width/13,width/13);
+                width/12,width/12);
         flpBird.setMargins(bird_rect.left -30, bird_rect.top-50,bird_rect.right-75,bird_rect.bottom-75);
         birdImage = new ImageView(this);
         birdImage.setImageResource(R.drawable.bird1);
@@ -530,7 +538,7 @@ public class Activity2 extends AppCompatActivity {
         int randomYY = randomX1.nextInt(1000);
         int rectL = width + randomXX;
         int rectT= height/20+randomYY;
-        Rect jetPurp =new Rect( rectL, rectT,rectL + width/11 , rectT + width/28);
+        Rect jetPurp =new Rect( rectL, rectT,rectL + width/11 , rectT + width/30);
         return jetPurp;
     }
     public void addJetYellow(Rect rect) {
@@ -577,14 +585,14 @@ public class Activity2 extends AppCompatActivity {
         int randomYY = 5+randomX1.nextInt(200);
         int rectL = width + randomXX;
         int rectT= randomYY;
-        Rect cloudrect =new Rect( rectL, rectT,rectL + width/8 , rectT + width/23);
+        Rect cloudrect =new Rect( rectL, rectT,rectL + width/8 , rectT + width/26);
         return cloudrect;
     }
     public void addCloud1(Rect rect) {
         frameLayout2.removeView(cloud1);
         fl_cloud1 = new FrameLayout.LayoutParams(
-                width/5, width/9);
-        fl_cloud1.setMargins(rect.left-width/25, rect.top-width/25, rect.left + 200, rect.top + 200);
+                width/5, width/7);
+        fl_cloud1.setMargins(rect.left-width/25, rect.top-width/25, rect.left + width/6, rect.top + width/6);
         cloud1 = new ImageView(this);
         cloud1.setImageResource(R.drawable.cloud1);
         cloud1.setLayoutParams(fl_cloud1);
@@ -594,7 +602,7 @@ public class Activity2 extends AppCompatActivity {
         frameLayout2.removeView(cloud2);
         fl_cloud2 = new FrameLayout.LayoutParams(
                 width/5, width/7);
-        fl_cloud2.setMargins(rect.left-width/25, rect.top-width/25, rect.left + 200, rect.top + 200);
+        fl_cloud2.setMargins(rect.left-width/25, rect.top-width/25, rect.left + width/6, rect.top + width/6);
         cloud2 = new ImageView(this);
         cloud2.setImageResource(R.drawable.cloud2);
         cloud2.setLayoutParams(fl_cloud2);
@@ -604,7 +612,7 @@ public class Activity2 extends AppCompatActivity {
         frameLayout2.removeView(cloud3);
         fl_cloud3 = new FrameLayout.LayoutParams(
                 width/5, width/7);
-        fl_cloud3.setMargins(rect.left-width/25, rect.top-width/25, rect.left + 200, rect.top + 200);
+        fl_cloud3.setMargins(rect.left-width/25, rect.top-width/25, rect.left + width/5, rect.top + width/5);
         cloud3 = new ImageView(this);
         cloud3.setImageResource(R.drawable.cloud3);
         cloud3.setLayoutParams(fl_cloud3);
@@ -639,14 +647,14 @@ public class Activity2 extends AppCompatActivity {
         int randomYY = height*70/100 + randomX1.nextInt(20);
         int rectL = width + randomXX;
         int rectT= randomYY;
-        Rect jetPurp =new Rect(rectL, rectT,rectL + width/20, rectT + height/5);
+        Rect jetPurp =new Rect(rectL, rectT,rectL + width/40, rectT + height/5);
         return jetPurp;
     }
     public void addTree(Rect rect) {
         frameLayout2.removeView(tree);
         fl_tree = new FrameLayout.LayoutParams(
-                width/3, height/3);
-        fl_tree.setMargins(rect.left-width/7, rect.top-25, rect.left + 200, rect.top + 200);
+                width/4, width/4);
+        fl_tree.setMargins(rect.left-width/8, rect.top, rect.left + 200, rect.top + 200);
         tree = new ImageView(this);
         tree.setImageResource(R.drawable.tree);
         tree.setLayoutParams(fl_tree);
@@ -655,7 +663,7 @@ public class Activity2 extends AppCompatActivity {
     public void moveTree() {
         rectTree.left -= 1;
         rectTree.right -= 1;
-        fl_tree.setMargins(rectTree.left-width/7 , rectTree.top -25 , rectTree.left , rectTree.top + 200);
+        fl_tree.setMargins(rectTree.left-width/9 , rectTree.top -width/15 , rectTree.left , rectTree.top + 200);
         tree.setLayoutParams(fl_tree);
         if (rectTree.left < -100) {
             rectTree = treeRect();
@@ -663,7 +671,7 @@ public class Activity2 extends AppCompatActivity {
     }
     public void addCoconut(){
         FrameLayout.LayoutParams flpCoconut = new FrameLayout.LayoutParams(
-                width/30,width/30);
+                width/20,width/20);
         flpCoconut.setMargins(bird_rect.left -width/60 , bird_rect.bottom,0,0);
         final ImageView coconutImage = new ImageView(this);
         coconutImage.setImageResource(R.drawable.fruit);
@@ -690,7 +698,7 @@ public class Activity2 extends AppCompatActivity {
     }
     public void addPineapple(){
         FrameLayout.LayoutParams flpCoconut = new FrameLayout.LayoutParams(
-                width/30,width/30);
+                width/19,width/19);
         flpCoconut.setMargins(bird_rect.left -width/60 , bird_rect.bottom,0,0);
         final ImageView pineappleImage = new ImageView(this);
         pineappleImage.setImageResource(R.drawable.pineapple);
@@ -735,13 +743,13 @@ public class Activity2 extends AppCompatActivity {
         int rectL = width + randomXX;
         int randomYY = height*85/100 + randomX1.nextInt(20);
         int rectT= randomYY;
-        Rect jetPurp =new Rect(rectL, rectT,rectL + width/10, rectT + height/20);
+        Rect jetPurp =new Rect(rectL, rectT,rectL + width/14, rectT + height/20);
         return jetPurp;
     }
     public void addP_tree(Rect rect) {
         frameLayout2.removeView(p_tree);
         fl_pTree = new FrameLayout.LayoutParams(
-                width/4, height/4);
+                width/5, height/5);
         fl_pTree.setMargins(rect.left-width/20, rect.top-height/30, rect.left + 20, rect.top + 20);///cant change here
         p_tree = new ImageView(this);
         p_tree.setImageResource(R.drawable.pineappletree);
@@ -763,7 +771,7 @@ public class Activity2 extends AppCompatActivity {
         int randomYY = 200 + randomX1.nextInt(500);
         int rectL =  randomXX;
         int rectT= randomYY;
-        Rect jetPurp =new Rect(rectL, rectT,rectL + width/20, rectT + height/20);
+        Rect jetPurp =new Rect(rectL, rectT,rectL + width/30, rectT + height/38);
         return jetPurp;
     }
     public void addFly(Rect rect) {
@@ -790,6 +798,38 @@ public class Activity2 extends AppCompatActivity {
         if (rectFly.left < -100) {
             rectFly = flyRect();
         }
+    }
+    public void moveFly2(){
+        Random randomX1 = new Random();
+        int randomXX= randomX1.nextInt(width/2);
+        if(bird_rect.top>rectFly.top){
+            //rectFly.offset(100,-100);
+            RotateAnimation rotate_fly = new RotateAnimation(0.0f, -360f, width/26,width/26);
+            rotate_fly.setDuration(1000);
+            rotate_fly.setRepeatCount(-1);
+            rotate_fly.setInterpolator(new LinearInterpolator());
+            fly.startAnimation(rotate_fly);
+            TranslateAnimation fly_animation2 = new TranslateAnimation(0,randomXX,0,-width);
+            fly_animation2.setRepeatCount(0);
+            fly_animation2.setDuration(2000);
+            fly_animation2.setFillAfter(true);
+            fly.startAnimation(fly_animation2);
+
+        }else{
+            RotateAnimation rotate_fly = new RotateAnimation(0.0f, -360f, width/26,width/26);
+            rotate_fly.setDuration(1000);
+            rotate_fly.setRepeatCount(-1);
+            rotate_fly.setInterpolator(new LinearInterpolator());
+            fly.startAnimation(rotate_fly);
+            TranslateAnimation fly_animation2 = new TranslateAnimation(0,randomXX,0,width);
+            fly_animation2.setRepeatCount(0);
+            fly_animation2.setDuration(2000);
+            fly_animation2.setFillAfter(true);
+            fly.startAnimation(fly_animation2);
+
+    }rectFly.left = -200;
+        rectFly.right=-200;
+        addFly(rectFly);
     }
     public boolean CollisionTest(Rect one, Rect two) {
         return one.left <= two.right && one.right >= two.left &&
