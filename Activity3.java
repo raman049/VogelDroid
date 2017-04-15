@@ -64,7 +64,6 @@ public class Activity3 extends AppCompatActivity {
         setContentView(frameLayout3);
          width = this.getResources().getDisplayMetrics().widthPixels;
          height = this.getResources().getDisplayMetrics().heightPixels;
-
         callbackManager = CallbackManager.Factory.create();
         shareDialog = new ShareDialog(this);
 
@@ -78,8 +77,8 @@ public class Activity3 extends AppCompatActivity {
         AdRequest adRequest = new AdRequest.Builder().build();
          adView.loadAd(adRequest);
 // Place the ad view.
-      //   frameLayout3.addView(adView);
-        // MobileAds.initialize(getApplicationContext(), "ca-app-pub-7941365967795667/9898703231");
+         frameLayout3.addView(adView);
+         MobileAds.initialize(getApplicationContext(), "ca-app-pub-7941365967795667/9898703231");
 
         mInterstitialAd = new InterstitialAd(this);
         mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
@@ -95,7 +94,7 @@ public class Activity3 extends AppCompatActivity {
           handler.postDelayed(new Runnable() {
              @Override
              public void run() {
-              //   showAds();
+                 showAds();
                  handler.postDelayed(this, 500);
              }
           }, 500);
@@ -112,7 +111,7 @@ public class Activity3 extends AppCompatActivity {
         highScore.setTypeface(face);
         highScore.setGravity(Gravity.CENTER);
         highScore.setTextColor(Color.YELLOW);
-        highScore.setTextSize(20);
+        highScore.setTextSize(24);
         highScore.setLayoutParams(flpHighScore);
         frameLayout3.addView(highScore);
 //PRESENT SCORE
@@ -126,11 +125,11 @@ public class Activity3 extends AppCompatActivity {
         presentScore.setTypeface(face);
         presentScore.setGravity(Gravity.CENTER);
         presentScore.setTextColor(Color.YELLOW);
-        presentScore.setTextSize(20);
+        presentScore.setTextSize(24);
         presentScore.setLayoutParams(flpScore);
         frameLayout3.addView(presentScore);
 // REPLAY
-        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(width / 10, height / 6);
+        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(width/10,width/10);
         lp.setMargins(width * 9 / 10 - 10, height * 6 / 7 - 30, 0, 0);
         ImageButton replayButton = new ImageButton(this);
         replayButton.setLayoutParams(lp);
@@ -139,15 +138,16 @@ public class Activity3 extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 loop1.stop();
+                loop1.release();
                 Intent i = new Intent(com.vogelplay.vogel3.Activity3.this, Activity2.class);
                 startActivity(i);
             }
-        });
+        });  
         frameLayout3.addView(replayButton);
 ///INSTRUCTION
         final ImageButton instruction = new ImageButton(this);
         popUpWindow = new PopupWindow(this);
-        FrameLayout.LayoutParams lpInst = new FrameLayout.LayoutParams(width / 10, height / 6);
+        FrameLayout.LayoutParams lpInst = new FrameLayout.LayoutParams(width/10,width/10);
         lpInst.setMargins(10, height * 6 / 7 - 30, 0, 0);
         instruction.setLayoutParams(lpInst);
         instruction.setBackgroundResource(R.drawable.instructionque);
@@ -171,7 +171,7 @@ public class Activity3 extends AppCompatActivity {
         popupFrame.addView(instView);
 
         ImageButton backButton = new ImageButton(this);
-        FrameLayout.LayoutParams lpbackButton = new FrameLayout.LayoutParams(width / 10, height / 6);
+        FrameLayout.LayoutParams lpbackButton = new FrameLayout.LayoutParams(width/10,width/10);
         lpbackButton.setMargins(10, 10, 0, 0);
         backButton.setLayoutParams(lpbackButton);
         backButton.setBackgroundResource(R.drawable.close);
@@ -186,7 +186,7 @@ public class Activity3 extends AppCompatActivity {
         popupFrame.addView(backButton);
         popUpWindow.setContentView(popupFrame);
         //FB BUTTON
-        FrameLayout.LayoutParams lpFb = new FrameLayout.LayoutParams(width / 10, height / 6);
+        FrameLayout.LayoutParams lpFb = new FrameLayout.LayoutParams(width/10,width/10);
         lpFb.setMargins(10, height * 29 / 42 - 40, 0, 0);
         ImageButton fbButton = new ImageButton(this);
         fbButton.setLayoutParams(lpFb);
@@ -200,7 +200,7 @@ public class Activity3 extends AppCompatActivity {
         frameLayout3.addView(fbButton);
 //  SCOREBOARD BUTTON
         scoreboard = new ImageButton(this);
-        FrameLayout.LayoutParams lpscoreb = new FrameLayout.LayoutParams(width / 10, height / 6);
+        FrameLayout.LayoutParams lpscoreb = new FrameLayout.LayoutParams(width/10,width/10);
         lpscoreb.setMargins(width / 10 + 20, height * 6 / 7 - 30, 0, 0);
         scoreboard.setLayoutParams(lpscoreb);
         scoreboard.setBackgroundResource(R.drawable.scoreboard);
@@ -249,9 +249,23 @@ public class Activity3 extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        loop1.stop();
+        loop1.release();
         Intent i = new Intent(Activity3.this, MainActivity.class);
         startActivity(i);
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        loop1.start();
+    }
+
     private void requestNewInterstitial() {
         AdRequest adRequest = new AdRequest.Builder()
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
