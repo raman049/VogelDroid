@@ -29,10 +29,7 @@ public class MainActivity extends AppCompatActivity {
     MediaPlayer loop1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        //setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        //Remove title bar
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getSupportActionBar().hide();
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -45,8 +42,8 @@ public class MainActivity extends AppCompatActivity {
         int width = this.getResources().getDisplayMetrics().widthPixels;
         int height = this.getResources().getDisplayMetrics().heightPixels;
         FrameLayout.LayoutParams flp = new FrameLayout.LayoutParams(
-                width/2,height/3);
-        flp.setMargins(width/4,height/6,0,0);
+                width*2/3,WindowManager.LayoutParams.WRAP_CONTENT);
+        flp.setMargins(width/6,height/7,0,0);
  // TEXT_VIEW VOGEL
         TextView tv = new TextView(this);
         tv.setText("VOGEL");
@@ -54,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         tv.setTypeface(face);
         tv.setGravity(Gravity.CENTER);
         tv.setTextColor(Color.BLUE);
-        tv.setTextSize(width/20);
+        tv.setTextSize(height/10);
         tv.setLayoutParams(flp);
         frameLayout.addView(tv);
 
@@ -63,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         loop1.setLooping(true);
         loop1.start();
 //PLAY BUTTON
-        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(width/10, height/6);
+        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(width/10, width/10);
         lp.setMargins(width*9/20,height/2,0,0);
         ImageButton playButton = new ImageButton(this);
         playButton.setLayoutParams(lp);
@@ -79,8 +76,8 @@ public class MainActivity extends AppCompatActivity {
         frameLayout.addView(playButton);
  // HIGHSCORE TEXT
         TextView highScore = new TextView(this);
-        FrameLayout.LayoutParams lpHS = new FrameLayout.LayoutParams(width/2, height/3);
-        lpHS.setMargins(width/4 ,height*3/4 ,0,0);
+        FrameLayout.LayoutParams lpHS = new FrameLayout.LayoutParams(width/2, WindowManager.LayoutParams.WRAP_CONTENT);
+        lpHS.setMargins(width/4 ,height*6/7 -30 ,0,0);
         SharedPreferences prefs = this.getSharedPreferences("myPrefsKey", Context.MODE_PRIVATE);
         int highScore_String;
         if (prefs.getBoolean("myPrefsKey",true)){
@@ -89,17 +86,17 @@ public class MainActivity extends AppCompatActivity {
             prefs.edit().putInt("score", 0).commit();
             highScore_String = prefs.getInt("score", 0);
         }
-        highScore.setText("HIGH SCORE: \n"+highScore_String);
+        highScore.setText("HIGH SCORE: "+highScore_String);
         highScore.setTypeface(face);
         highScore.setGravity(Gravity.CENTER);
         highScore.setTextColor(Color.YELLOW);
-        highScore.setTextSize(height/50);
+        highScore.setTextSize(height/40);
         highScore.setLayoutParams(lpHS);
         frameLayout.addView(highScore);
 
         final ImageButton instruction = new ImageButton(this);
         popUpWindow = new PopupWindow(this);
-        FrameLayout.LayoutParams lpInst = new FrameLayout.LayoutParams(width/10, height/6);
+        FrameLayout.LayoutParams lpInst = new FrameLayout.LayoutParams(width/10, width/10);
         lpInst.setMargins(10,height*6/7 -30,0,0);
         instruction.setLayoutParams(lpInst);
         instruction.setBackgroundResource(R.drawable.instructionque);
@@ -123,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
         popupFrame.addView(instView);
 
         ImageButton backButton = new ImageButton(this);
-        FrameLayout.LayoutParams lpbackButton = new FrameLayout.LayoutParams(width/10, height/6);
+        FrameLayout.LayoutParams lpbackButton = new FrameLayout.LayoutParams(width/10, width/10);
         lpbackButton.setMargins(10,10,0,0);
         backButton.setLayoutParams(lpbackButton);
         backButton.setBackgroundResource(R.drawable.close);
@@ -138,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
         popupFrame.addView(backButton);
         popUpWindow.setContentView(popupFrame);
         scoreboard = new ImageButton(this);
-        FrameLayout.LayoutParams lpscoreb = new FrameLayout.LayoutParams(width/10, height/6);
+        FrameLayout.LayoutParams lpscoreb = new FrameLayout.LayoutParams(width/10, width/10);
         lpscoreb.setMargins(width/10 +20,height*6/7 -30,0,0);
         scoreboard.setLayoutParams(lpscoreb);
         scoreboard.setBackgroundResource(R.drawable.scoreboard);
@@ -154,8 +151,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        startActivity(intent);
+    }
+
+
+    @Override
     protected void onPause() {
         super.onPause();
+        loop1.stop();
+        loop1.release();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        loop1 = MediaPlayer.create(this,R.raw.intro1);
+        loop1.start();
     }
 
     @Override
