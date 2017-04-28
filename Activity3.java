@@ -26,7 +26,7 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.login.LoginManager;
 import com.facebook.share.model.SharePhoto;
@@ -39,8 +39,8 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.drive.Drive;
 import com.google.android.gms.games.Games;
 import com.google.example.games.basegameutils.BaseGameUtils;
 
@@ -56,12 +56,11 @@ public class Activity3 extends AppCompatActivity implements GoogleApiClient.Conn
     Bitmap snapImage;
     int width,height;
     MediaPlayer loop1;
-   int REQUEST_LEADERBOARD = 1;
+    int highScore_String;
     private GoogleApiClient mGoogleApiClient;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        //setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         frameLayout3 = new FrameLayout(this);
         frameLayout3.setBackgroundColor(Color.argb(255, 0, 0, 200));
@@ -71,8 +70,8 @@ public class Activity3 extends AppCompatActivity implements GoogleApiClient.Conn
         super.onCreate(savedInstanceState);
 //  Setting the RelativeLayout as our content view
         setContentView(frameLayout3);
-         width = this.getResources().getDisplayMetrics().widthPixels;
-         height = this.getResources().getDisplayMetrics().heightPixels;
+        width = this.getResources().getDisplayMetrics().widthPixels;
+        height = this.getResources().getDisplayMetrics().heightPixels;
         callbackManager = CallbackManager.Factory.create();
         shareDialog = new ShareDialog(this);
 
@@ -81,16 +80,16 @@ public class Activity3 extends AppCompatActivity implements GoogleApiClient.Conn
 
         AdView adView = new AdView(this);
         adView.setAdSize(AdSize.SMART_BANNER);
-         adView.setLayoutParams(params);
+        adView.setLayoutParams(params);
         adView.setAdUnitId("ca-app-pub-7941365967795667/9898703231");
         AdRequest adRequest = new AdRequest.Builder().build();
-         adView.loadAd(adRequest);
+        adView.loadAd(adRequest);
 // Place the ad view.
-         frameLayout3.addView(adView);
-         MobileAds.initialize(getApplicationContext(), "ca-app-pub-7941365967795667/9898703231");
+        frameLayout3.addView(adView);
+        MobileAds.initialize(getApplicationContext(), "ca-app-pub-7941365967795667/4059149234");
 
         mInterstitialAd = new InterstitialAd(this);
-        mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
+        mInterstitialAd.setAdUnitId("ca-app-pub-7941365967795667/4059149234");
         mInterstitialAd.setAdListener(new AdListener() {
             @Override
             public void onAdClosed() {
@@ -99,14 +98,14 @@ public class Activity3 extends AppCompatActivity implements GoogleApiClient.Conn
         });
 
         requestNewInterstitial();
-          final Handler handler = new Handler();
-          handler.postDelayed(new Runnable() {
-             @Override
-             public void run() {
-                 showAds();
-                 handler.postDelayed(this, 100);
-             }
-          }, 100);
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                showAds();
+                handler.postDelayed(this, 100);
+            }
+        }, 100);
 
 
         FrameLayout.LayoutParams flpHighScore = new FrameLayout.LayoutParams(1000, 320);
@@ -114,7 +113,7 @@ public class Activity3 extends AppCompatActivity implements GoogleApiClient.Conn
         TextView highScore = new TextView(this);
 
         SharedPreferences prefs = this.getSharedPreferences("myPrefsKey", Context.MODE_PRIVATE);
-        int highScore_String = prefs.getInt("score", 0);
+        highScore_String = prefs.getInt("score", 0);
         highScore.setText("High Score: \n"+highScore_String);
         Typeface face = Typeface.createFromAsset(getAssets(), "fonts/comici.ttf");
         highScore.setTypeface(face);
@@ -128,7 +127,7 @@ public class Activity3 extends AppCompatActivity implements GoogleApiClient.Conn
                 1000, 320);
         flpScore.setMargins(width - width / 3 - 500, height / 10, 0, 0);
         TextView presentScore = new TextView(this);
-       Intent get_score = getIntent();
+        Intent get_score = getIntent();
         int final_score = get_score.getIntExtra("final_score",0);
         presentScore.setText("Your Score: \n"+final_score);
         presentScore.setTypeface(face);
@@ -165,8 +164,6 @@ public class Activity3 extends AppCompatActivity implements GoogleApiClient.Conn
                 instruction.invalidate();
                 scoreboard.invalidate();
                 popUpWindow.showAtLocation(frameLayout3, Gravity.CENTER, 0, 0);
-                final String ss = "skdjf";
-                Log.d(ss, "onClick");
             }
         });
         ImageView instView = new ImageView(com.vogelplay.vogel_4.Activity3.this);
@@ -192,7 +189,7 @@ public class Activity3 extends AppCompatActivity implements GoogleApiClient.Conn
         });
         popupFrame.addView(backButton);
         popUpWindow.setContentView(popupFrame);
- //FB BUTTON
+//FB BUTTON
         FrameLayout.LayoutParams lpFb = new FrameLayout.LayoutParams(width/10,width/10);
         lpFb.setMargins(10, height * 29 / 42 - 40, 0, 0);
         ImageButton fbButton = new ImageButton(this);
@@ -206,17 +203,16 @@ public class Activity3 extends AppCompatActivity implements GoogleApiClient.Conn
         });
         frameLayout3.addView(fbButton);
 //  SCOREBOARD BUTTON
-
-
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(Games.API).addScope(Games.SCOPE_GAMES)
-                .build();
-
-
-
-
+        GoogleApiAvailability api = GoogleApiAvailability.getInstance();
+        final int code = api.isGooglePlayServicesAvailable(this);
+        if (code == ConnectionResult.SUCCESS) {
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(Games.API).addScope(Games.SCOPE_GAMES)
+                    .build();
+            mGoogleApiClient.connect();
+        }
         scoreboard = new ImageButton(this);
         FrameLayout.LayoutParams lpscoreb = new FrameLayout.LayoutParams(width/10,width/10);
         lpscoreb.setMargins(width / 10 + 20, height * 6 / 7 - 30, 0, 0);
@@ -225,11 +221,15 @@ public class Activity3 extends AppCompatActivity implements GoogleApiClient.Conn
         scoreboard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivityForResult(Games.Leaderboards.getLeaderboardIntent(mGoogleApiClient,
-                        getString(R.string.leaderboard_highscore)), 0);
-                Games.Leaderboards.submitScore(mGoogleApiClient, getString(R.string.leaderboard_highscore), 1337);
-                Toast toast = Toast.makeText(com.vogelplay.vogel_4.Activity3.this, "You clicked button " + v.getId(), Toast.LENGTH_LONG);
-                toast.show();
+
+                if(mGoogleApiClient.isConnected()){
+                    // Do Your Stuff Here
+                    startActivityForResult(Games.Leaderboards.getLeaderboardIntent(mGoogleApiClient,
+                            getString(R.string.leaderboard_highscore)), 0);
+                } else {
+                    Toast toast = Toast.makeText(Activity3.this, "Restart and Sign in with Google Play Services ;)", Toast.LENGTH_LONG);
+                    toast.show();
+                }
             }
         });
         frameLayout3.addView(scoreboard);
@@ -241,7 +241,6 @@ public class Activity3 extends AppCompatActivity implements GoogleApiClient.Conn
         injured_bird.setLayoutParams(lp_injured_bird);
         frameLayout3.addView(injured_bird);
 
-
         final Handler handler2 = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -249,16 +248,10 @@ public class Activity3 extends AppCompatActivity implements GoogleApiClient.Conn
                 snapImage = screenShot(getWindow().getDecorView().getRootView());
             }
         }, 500);
-  //ADD SOUND
-        loop1 = MediaPlayer.create(this,R.raw.intro1);
-        loop1.setLooping(true);
-        loop1.start();
-
     }
 
     public void publishImage() {
         Bitmap image = snapImage;
-                //BitmapFactory.decodeResource(getResources(), R.drawable.injuredbird);
         SharePhoto photo = new SharePhoto.Builder()
                 .setBitmap(image)
                 .build();
@@ -278,26 +271,20 @@ public class Activity3 extends AppCompatActivity implements GoogleApiClient.Conn
         super.onStop();
         loop1.stop();
         loop1.release();
-        mGoogleApiClient.disconnect();
-
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        mGoogleApiClient.connect();
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
         loop1 = MediaPlayer.create(this, R.raw.intro1);
         loop1.setLooping(true);
         loop1.start();
     }
+
     @Override
     protected void onPause() {
         super.onPause();
+
     }
 
     private void requestNewInterstitial() {
@@ -329,7 +316,8 @@ public class Activity3 extends AppCompatActivity implements GoogleApiClient.Conn
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-     Log.d("connection", "connected");
+        Log.d("connection", "connected");
+        Games.Leaderboards.submitScore(mGoogleApiClient, getString(R.string.leaderboard_highscore), highScore_String);
     }
 
     @Override
@@ -351,21 +339,21 @@ public class Activity3 extends AppCompatActivity implements GoogleApiClient.Conn
 
         // if the sign-in button was clicked or if auto sign-in is enabled,
         // launch the sign-in flow
-        if (mSignInClicked || mAutoStartSignInFlow) {
-            mAutoStartSignInFlow = false;
-            mSignInClicked = false;
-            mResolvingConnectionFailure = true;
+//        if (mSignInClicked || mAutoStartSignInFlow) {
+//            mAutoStartSignInFlow = false;
+//            mSignInClicked = false;
+//            mResolvingConnectionFailure = true;
 
             // Attempt to resolve the connection failure using BaseGameUtils.
             // The R.string.signin_other_error value should reference a generic
             // error string in your strings.xml file, such as "There was
             // an issue with sign-in, please try again later."
-            if (!BaseGameUtils.resolveConnectionFailure(this,
-                    mGoogleApiClient, connectionResult,
-                    RC_SIGN_IN, "error")) {
-                mResolvingConnectionFailure = false;
-            }
-        }
+//            if (!BaseGameUtils.resolveConnectionFailure(this,
+//                    mGoogleApiClient, connectionResult,
+//                    RC_SIGN_IN, "error")) {
+//                mResolvingConnectionFailure = false;
+//            }
+  //      }
 
         // Put code here to display the sign-in button
     }
@@ -388,15 +376,8 @@ public class Activity3 extends AppCompatActivity implements GoogleApiClient.Conn
             }
         }
     }
-    // Call when the sign-in button is clicked
-    private void signInClicked() {
-        mSignInClicked = true;
-        mGoogleApiClient.connect();
-    }
 
-    // Call when the sign-out button is clicked
-    private void signOutclicked() {
-        mSignInClicked = false;
-        Games.signOut(mGoogleApiClient);
-    }
+
+
+
 }
