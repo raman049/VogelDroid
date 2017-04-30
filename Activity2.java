@@ -86,6 +86,14 @@ public class Activity2 extends AppCompatActivity {
         addSun();
         addBird();
     }
+    public void clear_sound(){
+        if(score_sound != null){
+            score_sound.release();
+        }
+        if(gameover_sound != null){
+            gameover_sound.release();
+        }
+    }
     public class DrawView extends View {
         public DrawView(Context context) {
             super(context);
@@ -304,15 +312,12 @@ public class Activity2 extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
+        clear_sound();
         loop2.stop();
         loop2.release();
     }
+
+
 
     @Override
     public void onBackPressed() {
@@ -326,8 +331,8 @@ public class Activity2 extends AppCompatActivity {
         addScore = true;
         avoidGravity = true;
         scoreInt += 10;
-        bird_rect.top -= height/8;
-        bird_rect.bottom -= height/8;
+        bird_rect.top -= height/9;
+        bird_rect.bottom -= height/9;
         birdImage.setImageResource(R.drawable.bird2);
         flpBird.setMargins(bird_rect.left - 30, bird_rect.top - 50, bird_rect.right, bird_rect.bottom);
         birdImage.setLayoutParams(flpBird);

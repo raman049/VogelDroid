@@ -142,8 +142,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 .addApi(Games.API).addScope(Games.SCOPE_GAMES)
                 .build();
 
-       // GoogleApiAvailability api = GoogleApiAvailability.getInstance();
-       // final int code = api.isGooglePlayServicesAvailable(this);
+        GoogleApiAvailability api = GoogleApiAvailability.getInstance();
+        final int code = api.isGooglePlayServicesAvailable(this);
         scoreboard = new ImageButton(this);
         FrameLayout.LayoutParams lpscoreb = new FrameLayout.LayoutParams(width/10, width/10);
         lpscoreb.setMargins(width/10 +20,height*6/7 -30,0,0);

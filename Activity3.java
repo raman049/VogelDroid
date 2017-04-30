@@ -145,6 +145,7 @@ public class Activity3 extends AppCompatActivity implements GoogleApiClient.Conn
         replayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                unload_image();
                 Intent i = new Intent(com.vogelplay.vogel_4.Activity3.this, Activity2.class);
                 startActivity(i);
             }
@@ -221,7 +222,6 @@ public class Activity3 extends AppCompatActivity implements GoogleApiClient.Conn
         scoreboard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if(mGoogleApiClient.isConnected()){
                     // Do Your Stuff Here
                     startActivityForResult(Games.Leaderboards.getLeaderboardIntent(mGoogleApiClient,
@@ -240,7 +240,7 @@ public class Activity3 extends AppCompatActivity implements GoogleApiClient.Conn
         lp_injured_bird.setMargins(width / 2 - 400, height / 10 + 150, 0, 0);
         injured_bird.setLayoutParams(lp_injured_bird);
         frameLayout3.addView(injured_bird);
-
+        snapImage = null;
         final Handler handler2 = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -251,7 +251,7 @@ public class Activity3 extends AppCompatActivity implements GoogleApiClient.Conn
     }
 
     public void publishImage() {
-        Bitmap image = snapImage;
+        image = snapImage;
         SharePhoto photo = new SharePhoto.Builder()
                 .setBitmap(image)
                 .build();
@@ -294,6 +294,8 @@ public class Activity3 extends AppCompatActivity implements GoogleApiClient.Conn
         mInterstitialAd.loadAd(adRequest);
     }
     Boolean adsCheck = false;
+    Bitmap bitmap;
+    Bitmap image;
     public void showAds() {
         if(adsCheck == false) {
             if (mInterstitialAd.isLoaded()) {
@@ -306,13 +308,20 @@ public class Activity3 extends AppCompatActivity implements GoogleApiClient.Conn
         }
     }
     public Bitmap screenShot(View view) {
-        Bitmap bitmap = Bitmap.createBitmap(width,
+         bitmap = Bitmap.createBitmap(width,
                 height, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         view.draw(canvas);
         return bitmap;
     }
-
+    public void unload_image(){
+        if(bitmap != null){
+            bitmap.recycle();
+        }
+        if(image != null){
+            image.recycle();
+        }
+    }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
